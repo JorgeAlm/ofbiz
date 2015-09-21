@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<site-conf xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://www.ofbiz.org/dtds/site-conf.xsd">
+	<include location="component://common/webcommon/WEB-INF/common-controller.xml"/>
+	<description>Learning Module Site Configuration File</description>
+	
+	<handler name="service-multi" type="request" class="org.ofbiz.webapp.event.ServiceMultiEventHandler"/>
+
+	<request-map uri="main">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="main" />
+	</request-map>
+
+	<request-map uri="ReportSaft">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="ReportSaft" />
+	</request-map>
+
+	<request-map uri="GenerateSaft">
+		<security https="true" auth="true" />
+		<event type="java" path="org.ofbiz.reports.ReportsEvents"
+			invoke="GenerateReport" />
+		<response name="success" type="request-redirect" value="ReportSaftPending">
+			<redirect-parameter name="jobId" from="jobId" />
+		</response>
+	</request-map>
+	
+	<request-map uri="ReportSaftPending">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="ReportSaftPending"/>
+	</request-map>
+	
+	<request-map uri="getJobStatusIdJson">
+		<security https="true" auth="true" />
+		<event type="service" invoke="getJobStatusId" />
+		<response name="success" type="request" value="json" />
+		<response name="error" type="request" value="json" />
+	</request-map>
+	
+	<request-map uri="getJobResultDisplay">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="JobResultDisplay"/>
+	</request-map>
+	
+	<request-map uri="DownloadReport">
+		<security https="true" auth="true" />
+		<event type="java" path="org.ofbiz.reports.ReportsEvents"
+			invoke="DownloadReport" />
+		<response name="success" type="none" />
+		<response name="error" type="none" />
+	</request-map>
+
+	<!-- View Mappings -->
+	<view-map name="main" type="screen"
+		page="component://reports/widget/reports/CommonScreens.xml#main" />
+
+	<view-map name="ReportSaft" type="screen"
+		page="component://reports/widget/reports/ReportsScreens.xml#ReportSaft" />
+
+	<view-map name="ReportSaftPending" type="screen"
+		page="component://reports/widget/reports/ReportsScreens.xml#ReportSaftPending" />
+		
+	<view-map name="JobResultDisplay" type="screen"
+		page="component://reports/widget/reports/ReportsScreens.xml#JobResultDisplay" />
+	<!-- end of view mappings -->
+</site-conf>

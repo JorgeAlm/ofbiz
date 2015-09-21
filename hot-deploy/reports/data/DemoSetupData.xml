@@ -1,0 +1,26 @@
+<entity-engine-xml>
+
+	<!-- Custom Time period definition for 2015/2016 fiscal year -->
+	<CustomTimePeriod organizationPartyId="Company"
+		customTimePeriodId="6020" periodTypeId="FISCAL_YEAR" fromDate="2015-01-01"
+		thruDate="2016-01-01" isClosed="N" periodNum="1" periodName="2015-2016" />
+
+	<Party partyId="PRT_TAXMAN" partyTypeId="PARTY_GROUP"/>
+    <PartyGroup partyId="PRT_TAXMAN" groupName="Portuguese Tax Authority"/>
+    <PartyRole partyId="PRT_TAXMAN" roleTypeId="TAX_AUTHORITY"/>
+    
+    <TaxAuthority taxAuthGeoId="PRT" taxAuthPartyId="PRT_TAXMAN" includeTaxInPrice="Y"/>
+    
+    <PartyTaxAuthInfo partyId="Company" taxAuthGeoId="PRT" taxAuthPartyId="PRT_TAXMAN" fromDate="2001-05-13 00:00:00.000" partyTaxId="510026311" isExempt="N"/>
+    <PartyTaxAuthInfo partyId="DemoCustAgent" taxAuthGeoId="PRT" taxAuthPartyId="PRT_TAXMAN" fromDate="2001-05-13 00:00:00.000" partyTaxId="786406763" isExempt="N"/>
+    <PartyTaxAuthInfo partyId="DemoCustCompany" taxAuthGeoId="PRT" taxAuthPartyId="PRT_TAXMAN" fromDate="2001-05-13 00:00:00.000" partyTaxId="659357474" isExempt="N"/>
+    <PartyTaxAuthInfo partyId="DemoCustomer" taxAuthGeoId="PRT" taxAuthPartyId="PRT_TAXMAN" fromDate="2001-05-13 00:00:00.000" partyTaxId="705413726" isExempt="N"/>
+    
+    <PostalAddress contactMechId="9000" stateProvinceGeoId="_NA_" postalCode="4000-001" countryGeoId="PRT" />
+    <PostalAddress contactMechId="9011" stateProvinceGeoId="_NA_" postalCode="4000-002" countryGeoId="PRT" />
+    <PostalAddress contactMechId="9010" stateProvinceGeoId="_NA_" postalCode="4000-003" countryGeoId="PRT" />
+    <PostalAddress contactMechId="9015" stateProvinceGeoId="_NA_" postalCode="4000-004" countryGeoId="PRT" />    
+    
+    <PartyContactMechPurpose partyId="DemoCustAgent" contactMechId="9011" contactMechPurposeTypeId="BILLING_LOCATION" fromDate="2001-05-13 00:00:00.000"/>
+	
+</entity-engine-xml>

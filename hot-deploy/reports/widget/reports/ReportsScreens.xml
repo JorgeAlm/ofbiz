@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<screens xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://www.ofbiz.org/dtds/widget-screen.xsd">
+
+	<screen name="ReportSaft">
+		<section>
+			<!--<actions> <set field="tabButtonItem" value="SimplestScreen" /> </actions> -->
+			<widgets>
+				<decorator-screen name="main-decorator"
+					location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<include-form name="ReportSaftGenerationForm"
+							location="component://reports/widget/reports/ReportsForms.xml" />
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="ReportSaftPending">
+		<section>
+			<actions>
+				<set field="layoutSettings.javaScripts[]" value="/reports/js/ReportsJobStatus.js"
+					global="true" />
+				<set field="isAjaxRequest" type="Boolean" value="false" global="true" />
+			</actions>
+			<widgets>
+				<decorator-screen name="main-decorator"
+					location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<include-screen name="JobResultDisplayInternal" />
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="JobDetailsDisplay">
+		<section>
+			<widgets>
+				<container>
+					<label text="Job ID: ${job.jobId}" />
+				</container>
+				<container>
+					<label text="Job Name: ${job.jobName}" />
+				</container>
+				<container>
+					<label text="Status: " />
+					<label text="${job.statusId}" id="StatusPlaceHolder" />
+				</container>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="JobResultDisplay">
+		<section>
+			<actions>
+				<property-map resource="CommonUiLabels" map-name="uiLabelMap"
+					global="true" />
+				<property-map resource="ReportsUiLabels" map-name="uiLabelMap"
+					global="true" />
+				<set field="isAjaxRequest" type="Boolean" value="true" global="true" />
+			</actions>
+			<widgets>
+				<include-screen name="JobResultDisplayInternal" />
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="JobResultDisplayInternal">
+		<section>
+			<actions>
+				<!-- Expects the existence of a request parameter named "jobId" -->
+				<entity-one value-field="job" entity-name="JobSandbox" />
+				<get-related relation-name="JobSandboxResult" list="jobResults"
+					value-field="job" />
+			</actions>
+			<widgets>
+				<section>
+					<condition>
+						<not>
+							<if-empty field="job" />
+						</not>
+					</condition>
+					<widgets>
+						<section>
+							<condition>
+								<or>
+									<if-compare field="job.statusId" operator="equals"
+										value="SERVICE_RUNNING" />
+									<if-compare field="job.statusId" operator="equals"
+										value="SERVICE_PENDING" />
+									<if-compare field="job.statusId" operator="equals"
+										value="SERVICE_QUEUED" />
+								</or>
+							</condition>
+							<widgets>
+								<section>
+									<condition>
+										<if-compare field="isAjaxRequest" operator="equals"
+											value="false" />
+									</condition>
+									<widgets>
+										<include-screen name="JobDetailsDisplay" />
+										<container id="ReportResultPlaceHolder">
+											<image src="/images/ajax-loader.gif" />
+										</container>
+										<platform-specific>
+											<html>
+												<html-template
+													location="component://reports/webapp/reports/reports/ReportStatus.ftl" />
+											</html>
+										</platform-specific>
+									</widgets>
+									<fail-widgets>
+										<platform-specific>
+											<html>
+												<html-template
+													location="component://reports/webapp/reports/reports/ReportFinished.ftl" />
+											</html>
+										</platform-specific>
+									</fail-widgets>
+								</section>
+							</widgets>
+							<fail-widgets>
+								<section>
+									<condition>
+										<if-compare field="job.statusId" operator="equals"
+											value="SERVICE_CANCELLED" />
+									</condition>
+									<widgets>
+										<section>
+											<condition>
+												<if-compare field="isAjaxRequest" operator="equals"
+													value="false" />
+											</condition>
+											<widgets>
+												<container>
+													<include-screen name="JobDetailsDisplay" />
+												</container>
+											</widgets>
+											<fail-widgets>
+												<platform-specific>
+													<html>
+														<html-template
+															location="component://reports/webapp/reports/reports/ReportFinished.ftl" />
+													</html>
+												</platform-specific>
+											</fail-widgets>
+										</section>
+										<container>
+											<label text="This job has been canceled."></label>
+										</container>
+									</widgets>
+									<fail-widgets>
+										<section>
+											<condition>
+												<or>
+													<if-compare field="job.statusId" operator="equals"
+														value="SERVICE_CRASHED" />
+													<if-compare field="job.statusId" operator="equals"
+														value="SERVICE_FAILED" />
+												</or>
+											</condition>
+											<widgets>
+												<section>
+													<condition>
+														<if-compare field="isAjaxRequest" operator="equals"
+															value="false" />
+													</condition>
+													<widgets>
+														<container>
+															<include-screen name="JobDetailsDisplay" />
+														</container>
+													</widgets>
+													<fail-widgets>
+														<platform-specific>
+															<html>
+																<html-template
+																	location="component://reports/webapp/reports/reports/ReportFinished.ftl" />
+															</html>
+														</platform-specific>
+													</fail-widgets>
+												</section>
+												<container>
+													<label
+														text="An error occurred while trying to run the job. Please try again." />
+													<section>
+														<widgets>
+															<include-screen name="JobResultMessages" />
+														</widgets>
+													</section>
+												</container>
+											</widgets>
+											<fail-widgets>
+												<section>
+													<condition>
+														<if-compare field="isAjaxRequest" operator="equals"
+															value="true" />
+													</condition>
+													<widgets>
+														<platform-specific>
+															<html>
+																<html-template
+																	location="component://reports/webapp/reports/reports/ReportFinished.ftl" />
+															</html>
+														</platform-specific>
+													</widgets>
+													<fail-widgets>
+														<include-screen name="JobDetailsDisplay" />
+													</fail-widgets>
+												</section>
+												<container id="ReportResultPlaceHolder">
+													<link target="DownloadReport" text="Download" style="buttontext">
+														<parameter param-name="jobId" from-field="parameters.jobId" />
+													</link>
+												</container>
+												<container>
+													<include-screen name="JobResultMessages" />
+												</container>
+											</fail-widgets>
+										</section>
+									</fail-widgets>
+								</section>
+							</fail-widgets>
+						</section>
+					</widgets>
+					<fail-widgets>
+						<container>
+							<label text="Unable to find requested job." />
+						</container>
+						<section>
+							<condition>
+								<if-compare field="isAjaxRequest" operator="equals"
+									value="true" />
+							</condition>
+							<widgets>
+								<platform-specific>
+									<html>
+										<html-template
+											location="component://reports/webapp/reports/reports/ReportFinished.ftl" />
+									</html>
+								</platform-specific>
+							</widgets>
+						</section>
+					</fail-widgets>
+				</section>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="JobResultMessages">
+		<section>
+			<condition>
+				<not>
+					<if-empty field="jobResults" />
+				</not>
+			</condition>
+			<widgets>
+				<platform-specific>
+					<html>
+						<html-template
+							location="component://reports/webapp/reports/reports/ReportMessages.ftl" />
+					</html>
+				</platform-specific>
+			</widgets>
+		</section>
+	</screen>
+</screens>

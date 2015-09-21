@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<screens xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://www.ofbiz.org/dtds/widget-screen.xsd">
+
+	<screen name="main-decorator">
+		<section>
+			<actions>
+				<property-map resource="CommonUiLabels" map-name="uiLabelMap"
+					global="true" />
+				<property-map resource="ReportsUiLabels" map-name="uiLabelMap"
+					global="true" />
+				<!--<property-map resource="PartyUiLabels" map-name="uiLabelMap"
+					global="true" />
+				<property-map resource="OrderUiLabels" map-name="uiLabelMap"
+					global="true" />
+				<property-map resource="ManufacturingUiLabels"
+					map-name="uiLabelMap" global="true" />-->
+				<set field="layoutSettings.companyName" from-field="uiLabelMap.ReportsCompanyName"
+					global="true" />
+				<set field="layoutSettings.companySubtitle" from-field="uiLabelMap.ReportsCompanySubtitle"
+					global="true" />
+				<set field="applicationMenuName" value="ReportsAppBar" global="true" />
+				<set field="applicationMenuLocation" value="component://reports/widget/reports/ReportsMenus.xml"
+					global="true" />
+				<set field="applicationTitle" value="${uiLabelMap.ReportsApplication}"
+					global="true" />
+				<!--<set field="invoiceMenuLocation" value="component://accounting/widget/ap/ApInvoiceMenus.xml"
+					global="true" />-->
+			</actions>
+			<widgets>
+				<include-screen name="ApplicationDecorator"
+					location="component://commonext/widget/CommonScreens.xml" />
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="main">
+		<section>
+			<!--<actions>
+				<set field="tabButtonItem" value="main"></set>
+				<set field="invoiceTypeId" value="PURCHASE_INVOICE" />
+			</actions>-->
+			<widgets>
+				<decorator-screen name="main-decorator"
+					location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<!--<section>
+							<actions>
+								<set field="organizationPartyId" from-field="organizationPartyId"
+									default-value="${defaultOrganizationPartyId}" />
+								<script
+									location="component://accounting/webapp/accounting/WEB-INF/actions/invoice/InvoiceReport.groovy" />
+							</actions>
+							<widgets>
+								<include-portal-page id="ApPortalPage" />
+							</widgets>
+						</section>-->
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+</screens>

@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entitymodel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://www.ofbiz.org/dtds/entitymodel.xsd">
+	
+	<entity entity-name="JobSandboxResult" package-name="org.ofbiz.service.schedule" title="Job Scheduler Sandbox Result Entity.">
+		<field name="jobResultId" type="id-ne" />
+		<field name="jobId" type="id" />
+		<field name="jobResult" type="very-long" />
+		<field name="jobResultBin" type="blob" />
+		<field name="jobResultMessages" type="very-long" />
+		<prim-key field="jobResultId" />
+		<relation rel-entity-name="JobSandbox" type="one">
+			<key-map field-name="jobId" rel-field-name="jobId" />
+		</relation>
+	</entity>
+	
+	<view-entity entity-name="ReportSaftOrgInfo" package-name="org.ofbiz.reports">
+		<member-entity entity-name="Party" entity-alias="P"/>
+		<member-entity entity-name="PartyGroup" entity-alias="PG"/>
+		<member-entity entity-name="PartyTaxAuthInfo" entity-alias="PTAI"/>
+		
+		<alias entity-alias="P" field="partyId" name="partyId"/>
+		<alias entity-alias="PG" field="groupName" name="groupName" />
+		<alias entity-alias="PTAI" field="taxAuthGeoId" name="taxAuthGeoId" />
+		<alias entity-alias="PTAI" field="partyTaxId" name="partyTaxId" />
+		
+		<alias entity-alias="PTAI" field="fromDate" name="taxInfoFromDate" />
+		<alias entity-alias="PTAI" field="thruDate" name="taxInfoThruDate" />
+		
+		<view-link entity-alias="P" rel-entity-alias="PG">
+			<key-map field-name="partyId"/>
+		</view-link>
+		
+		<view-link entity-alias="P" rel-entity-alias="PTAI">
+			<key-map field-name="partyId"/>
+		</view-link>
+		
+		<!-- Cannot have user-login, should not have the role "CUSTOMER" -->
+		<!-- Filter by PTAI by PT country -->
+		
+	</view-entity>
+	
+	<view-entity entity-name="ReportSaftOrgPA" package-name="org.ofbiz.reports">
+		<member-entity entity-name="Party" entity-alias="P"/>
+		<member-entity entity-name="PartyContactMech" entity-alias="PCM"/>
+		<member-entity entity-name="PartyContactMechPurpose" entity-alias="PCMP"/>
+        <member-entity entity-name="ContactMech" entity-alias="CM"/>
+        <member-entity entity-name="PostalAddress" entity-alias="PA"/>
+        <member-entity entity-name="Geo" entity-alias="STTG"/>
+        <member-entity entity-name="Geo" entity-alias="CTYG"/>
+        <member-entity entity-name="Geo" entity-alias="CTRYG"/> 
+        
+        <alias entity-alias="P" field="partyId" name="partyId"/>
+        <alias entity-alias="PCMP" field="contactMechPurposeTypeId" name="contactMechPurposeTypeId"/>
+        <alias entity-alias="PA" field="address1" name="address1" />
+		<alias entity-alias="PA" field="address2" name="address2" />
+		<alias entity-alias="PA" field="city" name="city" />
+		<alias entity-alias="PA" field="postalCode" name="postalCode" />
+		
+		<alias entity-alias="CTYG" field="geoId" name="countryGeoId" />
+		<alias entity-alias="CTYG" field="geoCode" name="countryGeoCode" />
+		<alias entity-alias="CTYG" field="geoName" name="countryGeoName" />
+		<alias entity-alias="STTG" field="geoId" name="stateGeoId" />
+		<alias entity-alias="STTG" field="geoCode" name="stateGeoCode" />
+		<alias entity-alias="STTG" field="geoName" name="stateGeoName" />
+		<alias entity-alias="CTRYG" field="geoId" name="countryGeoId" />
+		<alias entity-alias="CTRYG" field="geoCode" name="countryGeoCode" />
+		<alias entity-alias="CTRYG" field="geoName" name="countryGeoName" />
+		
+		<alias entity-alias="PCM" field="fromDate" name="pcmFromDate" />
+		<alias entity-alias="PCM" field="thruDate" name="pcmThruDate" />
+		<alias entity-alias="PCMP" field="fromDate" name="pcmpFromDate" />
+		<alias entity-alias="PCMP" field="thruDate" name="pcmpThruDate" />
+		
+		<view-link entity-alias="P" rel-entity-alias="PCM">
+            <key-map field-name="partyId"/>
+        </view-link>
+		<view-link entity-alias="PCM" rel-entity-alias="CM" rel-optional="true">
+            <key-map field-name="contactMechId"/>
+        </view-link>
+        <view-link entity-alias="PCM" rel-entity-alias="PCMP">
+            <key-map field-name="partyId"/>
+            <key-map field-name="contactMechId"/>
+        </view-link>
+        <view-link entity-alias="CM" rel-entity-alias="PA" rel-optional="true">
+            <key-map field-name="contactMechId"/>
+        </view-link>
+        <view-link entity-alias="PA" rel-entity-alias="STTG" rel-optional="true">
+            <key-map field-name="stateProvinceGeoId" rel-field-name="geoId"/>
+        </view-link>
+        <view-link entity-alias="PA" rel-entity-alias="CTYG" rel-optional="true">
+            <key-map field-name="countyGeoId" rel-field-name="geoId"/>
+        </view-link>
+        <view-link entity-alias="PA" rel-entity-alias="CTRYG" rel-optional="true">
+            <key-map field-name="countryGeoId" rel-field-name="geoId"/>
+        </view-link>
+        
+        <entity-condition>
+        	<condition-expr entity-alias="CM" field-name="contactMechTypeId" operator="equals" value="POSTAL_ADDRESS"/>
+        </entity-condition>
+	</view-entity>
+	
+	<view-entity entity-name="ReportSaftOrgTelecom" package-name="org.ofbiz.reports">
+		<member-entity entity-name="Party" entity-alias="P"/>
+		<member-entity entity-name="PartyContactMech" entity-alias="PCM"/>
+		<member-entity entity-name="PartyContactMechPurpose" entity-alias="PCMP"/>
+        <member-entity entity-name="ContactMech" entity-alias="CM"/>
+        <member-entity entity-alias="TN" entity-name="TelecomNumber"/>
+        
+        <alias entity-alias="P" field="partyId" name="partyId"/>
+        <alias entity-alias="PCMP" field="contactMechPurposeTypeId" name="contactMechPurposeTypeId"/>
+        <alias entity-alias="TN" field="countryCode" name="countryCode"/>
+		<alias entity-alias="TN" field="areaCode" name="areaCode"/>
+		<alias entity-alias="TN" field="contactNumber" name="contactNumber"/>
+		
+		<alias entity-alias="PCM" field="fromDate" name="pcmFromDate" />
+		<alias entity-alias="PCM" field="thruDate" name="pcmThruDate" />
+		<alias entity-alias="PCMP" field="fromDate" name="pcmpFromDate" />
+		<alias entity-alias="PCMP" field="thruDate" name="pcmpThruDate" />
+        
+        <view-link entity-alias="P" rel-entity-alias="PCM">
+            <key-map field-name="partyId"/>
+        </view-link>
+		<view-link entity-alias="PCM" rel-entity-alias="CM" rel-optional="true">
+            <key-map field-name="contactMechId"/>
+        </view-link>
+        <view-link entity-alias="PCM" rel-entity-alias="PCMP">
+            <key-map field-name="partyId"/>
+            <key-map field-name="contactMechId"/>
+        </view-link>
+        <view-link entity-alias="CM" rel-entity-alias="TN" rel-optional="true">
+            <key-map field-name="contactMechId"/>
+        </view-link>
+        
+        <entity-condition>
+        	<condition-expr entity-alias="CM" field-name="contactMechTypeId" operator="equals" value="TELECOM_NUMBER"/>
+        </entity-condition>        
+	</view-entity>
+	
+	<view-entity entity-name="ReportSaftOrgWebContact" package-name="org.ofbiz.reports">
+		<member-entity entity-name="Party" entity-alias="P"/>
+		<member-entity entity-name="PartyContactMech" entity-alias="PCM"/>
+		<member-entity entity-name="PartyContactMechPurpose" entity-alias="PCMP"/>
+        <member-entity entity-name="ContactMech" entity-alias="CM"/>
+        
+        <alias entity-alias="P" field="partyId" name="partyId"/>
+        <alias entity-alias="PCMP" field="contactMechPurposeTypeId" name="contactMechPurposeTypeId"/>
+        <alias entity-alias="CM" field="contactMechTypeId" name="contactMechTypeId"/>
+        <alias entity-alias="CM" field="infoString" name="infoString"/>
+        
+        <alias entity-alias="PCM" field="fromDate" name="pcmFromDate" />
+		<alias entity-alias="PCM" field="thruDate" name="pcmThruDate" />
+		<alias entity-alias="PCMP" field="fromDate" name="pcmpFromDate" />
+		<alias entity-alias="PCMP" field="thruDate" name="pcmpThruDate" />
+        
+        <view-link entity-alias="P" rel-entity-alias="PCM">
+            <key-map field-name="partyId"/>
+        </view-link>
+		<view-link entity-alias="PCM" rel-entity-alias="CM" rel-optional="true">
+            <key-map field-name="contactMechId"/>
+        </view-link>
+        <view-link entity-alias="PCM" rel-entity-alias="PCMP">
+            <key-map field-name="partyId"/>
+            <key-map field-name="contactMechId"/>
+        </view-link>
+		
+		<entity-condition>
+        	<condition-expr entity-alias="CM" field-name="contactMechTypeId" operator="in" value="EMAIL_ADDRESS,WEB_ADDRESS"/>
+        </entity-condition> 
+	</view-entity>
+	
+	<view-entity entity-name="ReportSaftCustomers" package-name="org.ofbiz.reports">
+		<member-entity entity-name="Party" entity-alias="P" />
+		<member-entity entity-name="PartyRole" entity-alias="PR" />
+		<member-entity entity-alias="PER" entity-name="Person"/>
+      	<member-entity entity-alias="PTYGRP" entity-name="PartyGroup"/>
+      	<member-entity entity-name="PartyTaxAuthInfo" entity-alias="PTAI"/>
+		
+		<alias entity-alias="P" field="partyId" name="partyId" />
+		<alias entity-alias="P" field="createdStamp" name="partyCreatedStamp" />
+		<!-- <alias entity-alias="PR" field="roleTypeId" name="roleTypeId" /> -->
+		<alias entity-alias="PR" field="createdStamp" name="partyRoleCreatedStamp" />
+		
+		<alias entity-alias="PER" name="firstName"/>
+      	<alias entity-alias="PER" name="middleName"/>
+      	<alias entity-alias="PER" name="lastName"/>
+      	<alias entity-alias="PTYGRP" name="groupName"/>
+      	<alias entity-alias="PTYGRP" name="groupNameLocal"/>
+      	<alias entity-alias="PTAI" field="taxAuthGeoId" name="taxAuthGeoId" />
+		<alias entity-alias="PTAI" field="partyTaxId" name="partyTaxId" />
+		<alias entity-alias="PTAI" field="fromDate" name="taxInfoFromDate" />
+		<alias entity-alias="PTAI" field="thruDate" name="taxInfoThruDate" />		
+		
+		<view-link entity-alias="P" rel-entity-alias="PR">
+            <key-map field-name="partyId"/>
+        </view-link>
+		<view-link entity-alias="P" rel-entity-alias="PER" rel-optional="true">
+			<key-map field-name="partyId"/>
+		</view-link>
+		<view-link entity-alias="P" rel-entity-alias="PTYGRP" rel-optional="true">
+			<key-map field-name="partyId"/>
+		</view-link>
+		<view-link entity-alias="P" rel-entity-alias="PTAI" rel-optional="true">
+			<key-map field-name="partyId"/>
+		</view-link>
+        
+        <entity-condition>
+        	<condition-expr entity-alias="PR" field-name="roleTypeId" operator="equals" value="CUSTOMER"/>
+        </entity-condition>
+	</view-entity>
+	
+</entitymodel>

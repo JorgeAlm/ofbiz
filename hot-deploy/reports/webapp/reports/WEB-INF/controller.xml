@@ -23,6 +23,7 @@
 		<response name="success" type="request-redirect" value="ReportSaftPending">
 			<redirect-parameter name="jobId" from="jobId" />
 		</response>
+		<response name="redirectToForm" type="request-redirect-noparam" value="ReportSaft" />
 	</request-map>
 	
 	<request-map uri="ReportSaftPending">

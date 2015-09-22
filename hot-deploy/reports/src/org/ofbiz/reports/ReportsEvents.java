@@ -23,6 +23,7 @@ import org.ofbiz.base.util.GeneralException;
 import org.ofbiz.base.util.UtilDateTime;
 import org.ofbiz.base.util.UtilHttp;
 import org.ofbiz.base.util.UtilMisc;
+import org.ofbiz.base.util.UtilValidate;
 import org.ofbiz.entity.Delegator;
 import org.ofbiz.entity.GenericValue;
 import org.ofbiz.entity.condition.EntityCondition;
@@ -31,7 +32,7 @@ import org.ofbiz.service.LocalDispatcher;
 import org.ofbiz.service.calendar.RecurrenceRule;
 
 public class ReportsEvents {
-	public static final String module = SaftGenerator.class.getName();
+	public static final String module = ReportsEvents.class.getName();
 
 	public static String GenerateReport(HttpServletRequest request,
 			HttpServletResponse response) throws ParserConfigurationException,
@@ -43,8 +44,13 @@ public class ReportsEvents {
         Locale locale = UtilHttp.getLocale(request);
         TimeZone timeZone = UtilHttp.getTimeZone(request);
         Delegator delegator = dispatcher.getDelegator();
+        Object customTimePeriodIdParameter = request.getParameter("timePeriod");
         
-		String customTimePeriodId = request.getParameter("timePeriod").toString();
+        if(UtilValidate.isEmpty(customTimePeriodIdParameter)){
+			return "redirectToForm";
+		}
+        
+		String customTimePeriodId = customTimePeriodIdParameter.toString();
 		String taxAuthGeoId = request.getParameter("taxAuthGeoId").toString();
 		String postalAddressPurposeTypeId = request.getParameter("postalAddressPurposeTypeId").toString();
 		String phonePurposeTypeId = request.getParameter("phonePurposeTypeId").toString();

@@ -11,7 +11,7 @@
     
     <TaxAuthority taxAuthGeoId="PRT" taxAuthPartyId="PRT_TAXMAN" includeTaxInPrice="Y"/>
     
-    <PartyTaxAuthInfo partyId="Company" taxAuthGeoId="PRT" taxAuthPartyId="PRT_TAXMAN" fromDate="2001-05-13 00:00:00.000" partyTaxId="510026311" isExempt="N"/>
+    <PartyTaxAuthInfo partyId="Company" taxAuthGeoId="PRT" taxAuthPartyId="PRT_TAXMAN" fromDate="2000-01-01 00:00:00.000" partyTaxId="510026311" isExempt="N"/>
     <PartyTaxAuthInfo partyId="DemoCustAgent" taxAuthGeoId="PRT" taxAuthPartyId="PRT_TAXMAN" fromDate="2001-05-13 00:00:00.000" partyTaxId="786406763" isExempt="N"/>
     <PartyTaxAuthInfo partyId="DemoCustCompany" taxAuthGeoId="PRT" taxAuthPartyId="PRT_TAXMAN" fromDate="2001-05-13 00:00:00.000" partyTaxId="659357474" isExempt="N"/>
     <PartyTaxAuthInfo partyId="DemoCustomer" taxAuthGeoId="PRT" taxAuthPartyId="PRT_TAXMAN" fromDate="2001-05-13 00:00:00.000" partyTaxId="705413726" isExempt="N"/>

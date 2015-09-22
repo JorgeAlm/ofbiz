@@ -47,8 +47,7 @@
         <member-entity entity-name="ContactMech" entity-alias="CM"/>
         <member-entity entity-name="PostalAddress" entity-alias="PA"/>
         <member-entity entity-name="Geo" entity-alias="STTG"/>
-        <member-entity entity-name="Geo" entity-alias="CTYG"/>
-        <member-entity entity-name="Geo" entity-alias="CTRYG"/> 
+        <member-entity entity-name="Geo" entity-alias="CTYG"/> 
         
         <alias entity-alias="P" field="partyId" name="partyId"/>
         <alias entity-alias="PCMP" field="contactMechPurposeTypeId" name="contactMechPurposeTypeId"/>
@@ -56,16 +55,14 @@
 		<alias entity-alias="PA" field="address2" name="address2" />
 		<alias entity-alias="PA" field="city" name="city" />
 		<alias entity-alias="PA" field="postalCode" name="postalCode" />
+		<alias entity-alias="PA" field="lastUpdatedStamp" name="paLastUpdatedStamp"/>
 		
-		<alias entity-alias="CTYG" field="geoId" name="countryGeoId" />
-		<alias entity-alias="CTYG" field="geoCode" name="countryGeoCode" />
-		<alias entity-alias="CTYG" field="geoName" name="countryGeoName" />
 		<alias entity-alias="STTG" field="geoId" name="stateGeoId" />
 		<alias entity-alias="STTG" field="geoCode" name="stateGeoCode" />
 		<alias entity-alias="STTG" field="geoName" name="stateGeoName" />
-		<alias entity-alias="CTRYG" field="geoId" name="countryGeoId" />
-		<alias entity-alias="CTRYG" field="geoCode" name="countryGeoCode" />
-		<alias entity-alias="CTRYG" field="geoName" name="countryGeoName" />
+		<alias entity-alias="CTYG" field="geoId" name="countryGeoId" />
+		<alias entity-alias="CTYG" field="geoCode" name="countryGeoCode" />
+		<alias entity-alias="CTYG" field="geoName" name="countryGeoName" />
 		
 		<alias entity-alias="PCM" field="fromDate" name="pcmFromDate" />
 		<alias entity-alias="PCM" field="thruDate" name="pcmThruDate" />
@@ -89,9 +86,6 @@
             <key-map field-name="stateProvinceGeoId" rel-field-name="geoId"/>
         </view-link>
         <view-link entity-alias="PA" rel-entity-alias="CTYG" rel-optional="true">
-            <key-map field-name="countyGeoId" rel-field-name="geoId"/>
-        </view-link>
-        <view-link entity-alias="PA" rel-entity-alias="CTRYG" rel-optional="true">
             <key-map field-name="countryGeoId" rel-field-name="geoId"/>
         </view-link>
         
@@ -112,6 +106,7 @@
         <alias entity-alias="TN" field="countryCode" name="countryCode"/>
 		<alias entity-alias="TN" field="areaCode" name="areaCode"/>
 		<alias entity-alias="TN" field="contactNumber" name="contactNumber"/>
+		<alias entity-alias="TN" field="lastUpdatedStamp" name="tnLastUpdatedStamp" />
 		
 		<alias entity-alias="PCM" field="fromDate" name="pcmFromDate" />
 		<alias entity-alias="PCM" field="thruDate" name="pcmThruDate" />
@@ -147,6 +142,7 @@
         <alias entity-alias="PCMP" field="contactMechPurposeTypeId" name="contactMechPurposeTypeId"/>
         <alias entity-alias="CM" field="contactMechTypeId" name="contactMechTypeId"/>
         <alias entity-alias="CM" field="infoString" name="infoString"/>
+        <alias entity-alias="CM" field="lastUpdatedStamp" name="cmLastUpdatedStamp" />
         
         <alias entity-alias="PCM" field="fromDate" name="pcmFromDate" />
 		<alias entity-alias="PCM" field="thruDate" name="pcmThruDate" />

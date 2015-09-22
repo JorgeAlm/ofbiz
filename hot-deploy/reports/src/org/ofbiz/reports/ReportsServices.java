@@ -21,6 +21,7 @@ import org.ofbiz.entity.serialize.SerializeException;
 import org.ofbiz.entity.serialize.XmlSerializer;
 import org.ofbiz.entity.transaction.TransactionUtil;
 import org.ofbiz.entity.util.EntityListIterator;
+import org.ofbiz.reports.ReportResult;
 import org.ofbiz.service.DispatchContext;
 import org.ofbiz.service.ModelService;
 import org.ofbiz.service.ServiceUtil;
@@ -60,16 +61,18 @@ public class ReportsServices {
 		}
 		
 		String messages = "";
+		
 		if(saftResult.getMessages().size() > 0){
 			messages = XmlSerializer.serialize(saftResult.getMessages());
 		}
 				
 		if(saftResult.getSuccess()){
-			result.put("saftContent", saftResult.getResult().toString());
-			CreateJobResult(delegator, jobId, saftResult.getResult().toString(), messages);
+			String jobResult = saftResult.getResult().toString();
+			result.put("saftContent", jobResult);
+			CreateJobResult(delegator, jobId, jobResult, messages);
 			return result;
 		} else {
-			CreateJobResult(delegator, jobId, saftResult.getResult().toString(), messages);
+			CreateJobResult(delegator, jobId, null, messages);
 			return ServiceUtil.returnError("One or more errors occurred while generating the SAFT report, please check job result for details.");
 		}
 	}

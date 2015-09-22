@@ -69,6 +69,10 @@ public class SaftGenerator {
 			taxAuthGeoId = "PRT";
 		}
 		
+		if(UtilValidate.isEmpty(postalAddressPurposeType)){
+			postalAddressPurposeType = "BILLING_LOCATION";
+		}
+		
 		if(UtilValidate.isEmpty(phonePurposeType)){
 			phonePurposeType = "PRIMARY_PHONE";
 		}
@@ -109,6 +113,15 @@ public class SaftGenerator {
 		Timestamp startTimestamp = new Timestamp(startDate.getTime());
 		Timestamp endTimestamp = new Timestamp(endDate.getTime());
 		String organizationPartyId = customTimePeriod.getString("organizationPartyId");
+		int comparisonValue = startDate.compareTo(endDate);
+		
+		if(comparisonValue == 0){
+			result.addMessage("The Fiscal year with id '" + customTimePeriodId + "' has a start date '" + startDate.toString() + "' that is equal to its end date '" + endDate.toString() + "'.", ReportMessageSeverity.Error);
+			return result;
+		} else if (comparisonValue > 0){
+			result.addMessage("The Fiscal year with id '" + customTimePeriodId + "' has a start date '" + startDate.toString() + "' that starts after its end date '" + endDate.toString() + "'.", ReportMessageSeverity.Error);
+			return result;
+		}
 
 		ReportResult headerResult = GenerateHeader(doc, delegator, startTimestamp, endTimestamp, organizationPartyId, taxAuthGeoId, 
 				postalAddressPurposeType, phonePurposeType, faxPurposeType, emailPurposeType, websitePurposeType);
@@ -118,8 +131,8 @@ public class SaftGenerator {
 		}
 		
 		Element masterFilesElement = doc.createElement("MasterFiles");
-		List<ReportMessage> customersMessages = GenerateCustomers(doc, masterFilesElement, delegator, startTimestamp, endTimestamp, postalAddressPurposeType, 
-				phonePurposeType, faxPurposeType, emailPurposeType, websitePurposeType);
+		List<ReportMessage> customersMessages = GenerateCustomers(doc, masterFilesElement, delegator, startTimestamp, endTimestamp, taxAuthGeoId, 
+				postalAddressPurposeType, phonePurposeType, faxPurposeType, emailPurposeType, websitePurposeType);
 		rootElement.appendChild(masterFilesElement);
 		if(customersMessages.size() > 0 ){
 			result.addAll(customersMessages);
@@ -157,13 +170,14 @@ public class SaftGenerator {
 		EntityCondition beginDateFilter = EntityCondition.makeCondition(beginDateFilterList, EntityJoinOperator.OR);
 		
 		List<EntityExpr> endDateFilterList = FastList.newInstance();
-		endDateFilterList.add(EntityCondition.makeCondition("taxInfoThruDate", EntityOperator.LESS_THAN_EQUAL_TO, startDate));
+		endDateFilterList.add(EntityCondition.makeCondition("taxInfoThruDate", EntityOperator.GREATER_THAN, startDate));
 		endDateFilterList.add(EntityCondition.makeCondition("taxInfoThruDate", null));
 		EntityCondition endDateFilter = EntityCondition.makeCondition(endDateFilterList, EntityJoinOperator.OR);
 		
 		EntityCondition orgInfoFilters = EntityCondition.makeCondition(UtilMisc.toList(partyFilter, beginDateFilter, endDateFilter), EntityOperator.AND);
 		
 		/* (StartDate1 <= EndDate2) and (StartDate2 <= EndDate1) */
+		/* (StartDate1 <= EndDate2) and (EndDate1 > StartDate2) */
 		
 		List<GenericValue> orgInfoList = delegator.findList("ReportSaftOrgInfo", orgInfoFilters, null, null, null, false);
 		
@@ -181,13 +195,16 @@ public class SaftGenerator {
 		return result;
 	}
 	
-	private static ReportResult GetPartyAddress(Delegator delegator, String partyId, Timestamp startDate, Timestamp endDate, String postalAddressPurposeType) throws GenericEntityException {
+	private static ReportResult GetPartyAddress(Delegator delegator, String partyId, Timestamp startDate, Timestamp endDate, String postalAddressPurposeType, String countryGeoId) throws GenericEntityException {
 		ReportResult result = new ReportResult();
 		
 		List<EntityCondition> filtersList = FastList.newInstance();
 		boolean hasUserFilter = false;
 		
-		EntityCondition partyFilter = EntityCondition.makeCondition("partyId", EntityOperator.EQUALS, partyId);
+		List<EntityExpr> partyFilterList = FastList.newInstance();
+		partyFilterList.add(EntityCondition.makeCondition("partyId", EntityOperator.EQUALS, partyId));
+		partyFilterList.add(EntityCondition.makeCondition("countryGeoId", EntityOperator.EQUALS, countryGeoId));
+		EntityCondition partyFilter = EntityCondition.makeCondition(partyFilterList, EntityJoinOperator.AND);
 		filtersList.add(partyFilter);
 		
 		List<EntityExpr> pcmBeginDateFilterList = FastList.newInstance();
@@ -197,7 +214,7 @@ public class SaftGenerator {
 		filtersList.add(pcmBeginDateFilter);
 		
 		List<EntityExpr> pcmEndDateFilterList = FastList.newInstance();
-		pcmEndDateFilterList.add(EntityCondition.makeCondition("pcmThruDate", EntityOperator.LESS_THAN_EQUAL_TO, startDate));
+		pcmEndDateFilterList.add(EntityCondition.makeCondition("pcmThruDate", EntityOperator.GREATER_THAN, startDate));
 		pcmEndDateFilterList.add(EntityCondition.makeCondition("pcmThruDate", null));
 		EntityCondition pcmEndDateFilter = EntityCondition.makeCondition(pcmEndDateFilterList, EntityJoinOperator.OR);
 		filtersList.add(pcmEndDateFilter);
@@ -209,7 +226,7 @@ public class SaftGenerator {
 		filtersList.add(pcmpBeginDateFilter);
 		
 		List<EntityExpr> pcmpEndDateFilterList = FastList.newInstance();
-		pcmpEndDateFilterList.add(EntityCondition.makeCondition("pcmpThruDate", EntityOperator.LESS_THAN_EQUAL_TO, startDate));
+		pcmpEndDateFilterList.add(EntityCondition.makeCondition("pcmpThruDate", EntityOperator.GREATER_THAN, startDate));
 		pcmpEndDateFilterList.add(EntityCondition.makeCondition("pcmpThruDate", null));
 		EntityCondition pcmpEndDateFilter = EntityCondition.makeCondition(pcmpEndDateFilterList, EntityJoinOperator.OR);
 		filtersList.add(pcmpEndDateFilter);
@@ -223,11 +240,11 @@ public class SaftGenerator {
 		
 		EntityCondition addressFilters = EntityCondition.makeCondition(filtersList, EntityOperator.AND);
 		
-		List<GenericValue> postalAddressesList = delegator.findList("ReportSaftOrgPA", addressFilters, null, null, null, false);
+		List<GenericValue> postalAddressesList = delegator.findList("ReportSaftOrgPA", addressFilters, null, UtilMisc.toList("paLastUpdatedStamp DESC"), null, false);
 		
 		if(postalAddressesList.size() == 0 && hasUserFilter){
 			// TODO:JA Add error message
-			result.addMessage("No active postal address found for party with id '" + partyId + "' and contact mechanism purpose id '" + postalAddressPurposeType + "' within the specified fiscal year. If any postal address is specified for the party it will be used.", ReportMessageSeverity.Warning);
+			result.addMessage("No active postal address found for party with id '" + partyId + "', contact mechanism purpose id '" + postalAddressPurposeType + "' and country geo id '" + countryGeoId +"' within the specified fiscal year. If any postal address is specified for the party it will be used.", ReportMessageSeverity.Warning);
 			
 			// Search without the last filter
 			filtersList.remove(filtersList.size() - 1);
@@ -237,9 +254,9 @@ public class SaftGenerator {
 		}
 		
 		if(postalAddressesList == null || postalAddressesList.isEmpty()){
-			result.addMessage("No active postal address found for party with id '" + partyId + "' within the specified fiscal year.", ReportMessageSeverity.Error);
+			result.addMessage("No active postal address found for party with id '" + partyId + "' and country geo id '" + countryGeoId + "' within the specified fiscal year.", ReportMessageSeverity.Error);
 		} else if (postalAddressesList.size() > 1){
-			result.addMessage("More than one active postal address found for party with id '" + partyId + "' within the specified fiscal year. The most recently updated one will be used.", ReportMessageSeverity.Warning);
+			result.addMessage("More than one active postal address found for party with id '" + partyId + "' and country geo id '" + countryGeoId + "' within the specified fiscal year. The most recently updated one will be used.", ReportMessageSeverity.Warning);
 			result.setResult(postalAddressesList.get(0));
 		} else {
 			result.setResult(postalAddressesList.get(0));
@@ -260,7 +277,7 @@ public class SaftGenerator {
 		EntityCondition pcmBeginDateFilter = EntityCondition.makeCondition(pcmBeginDateFilterList, EntityJoinOperator.OR);
 		
 		List<EntityExpr> pcmEndDateFilterList = FastList.newInstance();
-		pcmEndDateFilterList.add(EntityCondition.makeCondition("pcmThruDate", EntityOperator.LESS_THAN_EQUAL_TO, startDate));
+		pcmEndDateFilterList.add(EntityCondition.makeCondition("pcmThruDate", EntityOperator.GREATER_THAN, startDate));
 		pcmEndDateFilterList.add(EntityCondition.makeCondition("pcmThruDate", null));
 		EntityCondition pcmEndDateFilter = EntityCondition.makeCondition(pcmEndDateFilterList, EntityJoinOperator.OR);
 		
@@ -270,13 +287,13 @@ public class SaftGenerator {
 		EntityCondition pcmpBeginDateFilter = EntityCondition.makeCondition(pcmpBeginDateFilterList, EntityJoinOperator.OR);
 		
 		List<EntityExpr> pcmpEndDateFilterList = FastList.newInstance();
-		pcmpEndDateFilterList.add(EntityCondition.makeCondition("pcmpThruDate", EntityOperator.LESS_THAN_EQUAL_TO, startDate));
+		pcmpEndDateFilterList.add(EntityCondition.makeCondition("pcmpThruDate", EntityOperator.GREATER_THAN, startDate));
 		pcmpEndDateFilterList.add(EntityCondition.makeCondition("pcmpThruDate", null));
 		EntityCondition pcmpEndDateFilter = EntityCondition.makeCondition(pcmpEndDateFilterList, EntityJoinOperator.OR);
 		
 		EntityCondition telecomFilters = EntityCondition.makeCondition(UtilMisc.toList(partyFilter, pcmBeginDateFilter, pcmEndDateFilter, pcmpBeginDateFilter, pcmpEndDateFilter), EntityOperator.AND);
 		
-		List<GenericValue> telecomContacts = delegator.findList("ReportSaftOrgTelecom", telecomFilters, null, null, null, false);
+		List<GenericValue> telecomContacts = delegator.findList("ReportSaftOrgTelecom", telecomFilters, null, UtilMisc.toList("contactMechPurposeTypeId ASC", "tnLastUpdatedStamp DESC"), null, false);
 		
 		for (GenericValue contact: telecomContacts){
 			String contactPurposeType = contact.getString("contactMechPurposeTypeId");
@@ -308,7 +325,7 @@ public class SaftGenerator {
 		EntityCondition pcmBeginDateFilter = EntityCondition.makeCondition(pcmBeginDateFilterList, EntityJoinOperator.OR);
 		
 		List<EntityExpr> pcmEndDateFilterList = FastList.newInstance();
-		pcmEndDateFilterList.add(EntityCondition.makeCondition("pcmThruDate", EntityOperator.LESS_THAN_EQUAL_TO, startDate));
+		pcmEndDateFilterList.add(EntityCondition.makeCondition("pcmThruDate", EntityOperator.GREATER_THAN, startDate));
 		pcmEndDateFilterList.add(EntityCondition.makeCondition("pcmThruDate", null));
 		EntityCondition pcmEndDateFilter = EntityCondition.makeCondition(pcmEndDateFilterList, EntityJoinOperator.OR);
 		
@@ -318,13 +335,13 @@ public class SaftGenerator {
 		EntityCondition pcmpBeginDateFilter = EntityCondition.makeCondition(pcmpBeginDateFilterList, EntityJoinOperator.OR);
 		
 		List<EntityExpr> pcmpEndDateFilterList = FastList.newInstance();
-		pcmpEndDateFilterList.add(EntityCondition.makeCondition("pcmpThruDate", EntityOperator.LESS_THAN_EQUAL_TO, startDate));
+		pcmpEndDateFilterList.add(EntityCondition.makeCondition("pcmpThruDate", EntityOperator.GREATER_THAN, startDate));
 		pcmpEndDateFilterList.add(EntityCondition.makeCondition("pcmpThruDate", null));
 		EntityCondition pcmpEndDateFilter = EntityCondition.makeCondition(pcmpEndDateFilterList, EntityJoinOperator.OR);
 		
 		EntityCondition webFilters = EntityCondition.makeCondition(UtilMisc.toList(partyFilter, pcmBeginDateFilter, pcmEndDateFilter, pcmpBeginDateFilter, pcmpEndDateFilter), EntityOperator.AND);
 		
-		List<GenericValue> webContacts = delegator.findList("ReportSaftOrgWebContact", webFilters, null, null, null, false);
+		List<GenericValue> webContacts = delegator.findList("ReportSaftOrgWebContact", webFilters, null, UtilMisc.toList("contactMechPurposeTypeId ASC", "cmLastUpdatedStamp DESC"), null, false);
 		
 		for (GenericValue contact: webContacts){
 			String contactPurposeType = contact.getString("contactMechPurposeTypeId");
@@ -362,8 +379,10 @@ public class SaftGenerator {
 		Map<String, GenericValue> telecomMap = null;
 		Map<String, GenericValue> webcomMap = null;
 		SimpleDateFormat shortDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat yearDateFormat = new SimpleDateFormat("yyyy");
 		String taxId = "";
 		Integer taxNumber = null;
+		String fiscalYear = yearDateFormat.format(startDate);
 		
 		// Retrieve Data
 		orgInfoResult = GetPartyTaxInfo(delegator, orgPartyId, startDate, endDate, taxAuthGeoId);
@@ -374,7 +393,7 @@ public class SaftGenerator {
 			orgInfo = (GenericValue)orgInfoResult.getResult();
 		}
 		
-		postalAddressResult = GetPartyAddress(delegator, orgPartyId, startDate, endDate, postalAddressPurposeType);
+		postalAddressResult = GetPartyAddress(delegator, orgPartyId, startDate, endDate, postalAddressPurposeType, taxAuthGeoId);
 		if(postalAddressResult.getMessages().size() > 0){
 			result.addAll(postalAddressResult.getMessages());
 		}
@@ -493,7 +512,7 @@ public class SaftGenerator {
 		}
 		
 		// Required - FiscalYear
-		header.appendChild(CreateSimpleElement(doc, "FiscalYear", "2007")); // TODO: REPLACE WITH ACTUAL VALUE
+		header.appendChild(CreateSimpleElement(doc, "FiscalYear", fiscalYear));
 		
 		// Required - StartDate
 		header.appendChild(CreateSimpleElement(doc, "StartDate", shortDateFormat.format(startDate)));
@@ -579,7 +598,7 @@ public class SaftGenerator {
 	}
 
 	private static List<ReportMessage> GenerateCustomers(Document doc, Element parentElement, Delegator delegator, Timestamp startDate, Timestamp endDate,
-			String postalAddressPurposeType, String phonePurposeType, String faxPurposeType, 
+			String taxAuthGeoId, String postalAddressPurposeType, String phonePurposeType, String faxPurposeType, 
 			String emailPurposeType, String websitePurposeType) throws GenericEntityException {
 		List<ReportMessage> result = new ArrayList<ReportMessage>();
 		EntityExpr prtTaxAuthority = EntityCondition.makeCondition("taxAuthGeoId", EntityOperator.EQUALS, "PRT");
@@ -638,7 +657,7 @@ public class SaftGenerator {
 			// customerElement.appendChild(CreateSimpleElement(doc, "Contact", "Carlos Antunes"));
 			
 			// Retrieve Data
-			postalAddressResult = GetPartyAddress(delegator, partyId, startDate, endDate, postalAddressPurposeType);
+			postalAddressResult = GetPartyAddress(delegator, partyId, startDate, endDate, postalAddressPurposeType, taxAuthGeoId);
 			if(postalAddressResult.getMessages().size() > 0){
 				result.addAll(postalAddressResult.getMessages());
 			}

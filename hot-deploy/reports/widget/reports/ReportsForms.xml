@@ -2,7 +2,7 @@
 	xsi:noNamespaceSchemaLocation="http://www.ofbiz.org/dtds/widget-form.xsd">
 	
 	<form name="ReportSaftGenerationForm" type="single" target="GenerateSaft">
-		<field name="timePeriod">
+		<field name="timePeriod" title="${uiLabelMap.SaftTimePeriodTitle}">
 			<drop-down allow-empty="false" allow-multiple="false">
 				<entity-options entity-name="CustomTimePeriod" key-field-name="customTimePeriodId" description="${periodName}" filter-by-date="false">
 					<entity-constraint name="periodTypeId" operator="equals" value="FISCAL_YEAR"/>
@@ -10,7 +10,7 @@
 				</entity-options>
 			</drop-down>
 		</field>
-		<field name="taxAuthGeoId">
+		<field name="taxAuthGeoId" title="${uiLabelMap.SaftTaxAuthGeoIdTitle}">
 			<drop-down allow-empty="true" allow-multiple="false">
 				<entity-options entity-name="Geo" key-field-name="geoId" description="${geoName}" filter-by-date="false">
 					<entity-constraint name="geoTypeId" operator="equals" value="COUNTRY"/>
@@ -18,7 +18,7 @@
 				</entity-options>
 			</drop-down>
 		</field>
-		<field name="postalAddressPurposeTypeId">
+		<field name="postalAddressPurposeTypeId" title="${uiLabelMap.SaftPostalAddressPurposeTypeIdTitle}">
 			<drop-down allow-empty="true" allow-multiple="false">
 				<entity-options entity-name="ContactMechTypePurpose" key-field-name="contactMechPurposeTypeId" description="${contactMechPurposeTypeId}" filter-by-date="false">
 					<entity-constraint name="contactMechTypeId" operator="equals" value="POSTAL_ADDRESS"/>
@@ -26,7 +26,7 @@
 				</entity-options>
 			</drop-down>
 		</field>
-		<field name="phonePurposeTypeId">
+		<field name="phonePurposeTypeId" title="${uiLabelMap.SaftPhonePurposeTypeIdTitle}">
 			<drop-down allow-empty="true" allow-multiple="false">
 				<entity-options entity-name="ContactMechTypePurpose" key-field-name="contactMechPurposeTypeId" description="${contactMechPurposeTypeId}" filter-by-date="false">
 					<entity-constraint name="contactMechTypeId" operator="equals" value="TELECOM_NUMBER"/>
@@ -34,7 +34,7 @@
 				</entity-options>
 			</drop-down>
 		</field>
-		<field name="faxPurposeTypeId">
+		<field name="faxPurposeTypeId" title="${uiLabelMap.SaftFaxPurposeTypeIdTitle}">
 			<drop-down allow-empty="true" allow-multiple="false">
 				<entity-options entity-name="ContactMechTypePurpose" key-field-name="contactMechPurposeTypeId" description="${contactMechPurposeTypeId}" filter-by-date="false">
 					<entity-constraint name="contactMechTypeId" operator="equals" value="TELECOM_NUMBER"/>
@@ -42,7 +42,7 @@
 				</entity-options>
 			</drop-down>
 		</field>
-		<field name="emailPurposeTypeId">
+		<field name="emailPurposeTypeId" title="${uiLabelMap.SaftEmailPurposeTypeIdTitle}">
 			<drop-down allow-empty="true" allow-multiple="false">
 				<entity-options entity-name="ContactMechTypePurpose" key-field-name="contactMechPurposeTypeId" description="${contactMechPurposeTypeId}" filter-by-date="false">
 					<entity-constraint name="contactMechTypeId" operator="equals" value="EMAIL_ADDRESS"/>
@@ -50,7 +50,7 @@
 				</entity-options>
 			</drop-down>
 		</field>
-		<field name="websitePurposeTypeId">
+		<field name="websitePurposeTypeId" title="${uiLabelMap.SaftWebsitePurposeTypeIdTitle}">
 			<drop-down allow-empty="true" allow-multiple="false">
 				<entity-options entity-name="ContactMechTypePurpose" key-field-name="contactMechPurposeTypeId" description="${contactMechPurposeTypeId}" filter-by-date="false">
 					<entity-constraint name="contactMechTypeId" operator="equals" value="WEB_ADDRESS"/>
@@ -58,7 +58,7 @@
 				</entity-options>
 			</drop-down>
 		</field>
-		<field name="submit">
+		<field name="submit" title="${uiLabelMap.CommonSubmit}">
 			<submit />
 		</field>
 	</form>

@@ -9,12 +9,6 @@
 					global="true" />
 				<property-map resource="ReportsUiLabels" map-name="uiLabelMap"
 					global="true" />
-				<!--<property-map resource="PartyUiLabels" map-name="uiLabelMap"
-					global="true" />
-				<property-map resource="OrderUiLabels" map-name="uiLabelMap"
-					global="true" />
-				<property-map resource="ManufacturingUiLabels"
-					map-name="uiLabelMap" global="true" />-->
 				<set field="layoutSettings.companyName" from-field="uiLabelMap.ReportsCompanyName"
 					global="true" />
 				<set field="layoutSettings.companySubtitle" from-field="uiLabelMap.ReportsCompanySubtitle"
@@ -24,8 +18,6 @@
 					global="true" />
 				<set field="applicationTitle" value="${uiLabelMap.ReportsApplication}"
 					global="true" />
-				<!--<set field="invoiceMenuLocation" value="component://accounting/widget/ap/ApInvoiceMenus.xml"
-					global="true" />-->
 			</actions>
 			<widgets>
 				<include-screen name="ApplicationDecorator"

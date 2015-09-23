@@ -4,7 +4,9 @@
 
 	<screen name="ReportSaft">
 		<section>
-			<!--<actions> <set field="tabButtonItem" value="SimplestScreen" /> </actions> -->
+			<actions>
+				<set field="headerItem" value="reportsaft"/>
+			</actions>
 			<widgets>
 				<decorator-screen name="main-decorator"
 					location="${parameters.mainDecoratorLocation}">
@@ -23,6 +25,7 @@
 				<set field="layoutSettings.javaScripts[]" value="/reports/js/ReportsJobStatus.js"
 					global="true" />
 				<set field="isAjaxRequest" type="Boolean" value="false" global="true" />
+				<set field="headerItem" value="reportsaft"/>
 			</actions>
 			<widgets>
 				<decorator-screen name="main-decorator"
@@ -39,14 +42,15 @@
 		<section>
 			<widgets>
 				<container>
-					<label text="Job ID: ${job.jobId}" />
+					<label text="${uiLabelMap.SaftJobId}: ${job.jobId}" />
 				</container>
 				<container>
-					<label text="Job Name: ${job.jobName}" />
+					<label text="${uiLabelMap.SaftJobName}: ${job.jobName}" />
 				</container>
 				<container>
-					<label text="Status: " />
-					<label text="${job.statusId}" id="StatusPlaceHolder" />
+					<label text="${uiLabelMap.SaftJobStatus}: " />
+					<label text="${groovy:uiLabelMap['SaftJobStatus_' + job.statusId]}"
+						id="StatusPlaceHolder" />
 				</container>
 			</widgets>
 		</section>
@@ -149,7 +153,7 @@
 											</fail-widgets>
 										</section>
 										<container>
-											<label text="This job has been canceled."></label>
+											<label text="${uiLabelMap.SaftJobCancelledMessage}" />
 										</container>
 									</widgets>
 									<fail-widgets>
@@ -183,8 +187,7 @@
 													</fail-widgets>
 												</section>
 												<container>
-													<label
-														text="An error occurred while trying to run the job. Please try again." />
+													<label text="${uiLabelMap.SaftJobFailedMessage}" />
 													<section>
 														<widgets>
 															<include-screen name="JobResultMessages" />
@@ -211,7 +214,8 @@
 													</fail-widgets>
 												</section>
 												<container id="ReportResultPlaceHolder">
-													<link target="DownloadReport" text="Download" style="buttontext">
+													<link target="DownloadReport" text="${uiLabelMap.SaftDownload}"
+														style="buttontext">
 														<parameter param-name="jobId" from-field="parameters.jobId" />
 													</link>
 												</container>

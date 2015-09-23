@@ -14417,6 +14417,10 @@
         <value xml:lang="zh-CN">工作计划</value>
         <value xml:lang="zh-TW">工項</value>
     </property>
+    <property key="Reports">
+		<value xml:lang="en">Reports</value>
+		<value xml:lang="pt">Relatórios</value>
+    </property>
     <property key="ar">
         <value xml:lang="ar">عربية</value>
         <value xml:lang="cs">Arabština</value>

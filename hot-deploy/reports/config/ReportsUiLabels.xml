@@ -12,6 +12,126 @@
 <resource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<property key="ReportsCompanyName">
 		<value xml:lang="en">OFBiz: Reports</value>
-		<value xml:lang="pt">OFBiz: Reports</value>
+		<value xml:lang="pt">OFBiz: Relatórios</value>
 	</property>
+	<property key="ReportsCompanySubtitle">
+        <value xml:lang="en">Part of the Open For Business Family of Open Source Software</value>
+        <value xml:lang="pt">Parte da família OfBiz de software de fonte aberta</value>
+    </property>
+    <property key="ReportsApplication">
+    	<value xml:lang="en">Reports</value>
+		<value xml:lang="pt">Relatórios</value>
+    </property>
+    <!-- Reports Forms -->
+    <property key="SaftTimePeriodTitle">
+    	<value xml:lang="en">Fiscal Year</value>
+		<value xml:lang="pt">Ano fiscal</value>
+    </property>
+    <property key="SaftTaxAuthGeoIdTitle">
+    	<value xml:lang="en">Tax authority</value>
+		<value xml:lang="pt">Autoridade tributária</value>
+    </property>
+    <property key="SaftPostalAddressPurposeTypeIdTitle">
+    	<value xml:lang="en">Postal address purpose type</value>
+		<value xml:lang="pt">Tipo de objetivo da morada</value>
+    </property>
+    <property key="SaftPhonePurposeTypeIdTitle">
+    	<value xml:lang="en">Phone number purpose type</value>
+		<value xml:lang="pt">Tipo de objetivo do número de telefone</value>
+    </property>
+    <property key="SaftFaxPurposeTypeIdTitle">
+    	<value xml:lang="en">Fax number purpose type</value>
+		<value xml:lang="pt">Tipo de objetivo do número de fax</value>
+    </property>
+    <property key="SaftEmailPurposeTypeIdTitle">
+    	<value xml:lang="en">Email purpose type</value>
+		<value xml:lang="pt">Tipo de objetivo do endereço de email</value>
+    </property>
+    <property key="SaftWebsitePurposeTypeIdTitle">
+    	<value xml:lang="en">Website purpose type</value>
+		<value xml:lang="pt">Tipo de objetivo do endereço Web</value>
+    </property>
+    <!-- Reports Menus -->
+    <property key="ReportsMenuTitle">
+    	<value xml:lang="en">Reports</value>
+		<value xml:lang="pt">Relatórios</value>
+    </property>
+    <property key="ReportSaftPtMenuTitle">
+    	<value xml:lang="en">SAFT-PT</value>
+    </property>
+    <!-- Reports Screens -->
+    <property key="SaftJobId">
+    	<value xml:lang="en">Job identifier</value>
+		<value xml:lang="pt">Id do processo</value>
+    </property>
+    <property key="SaftJobName">
+    	<value xml:lang="en">Job name</value>
+		<value xml:lang="pt">Nome do processo</value>
+    </property>
+    <property key="SaftJobStatus">
+    	<value xml:lang="en">Job status</value>
+		<value xml:lang="pt">Estado do processo</value>
+    </property>
+    <property key="SaftDownload">
+    	<value xml:lang="en">Download</value>
+		<value xml:lang="pt">Transferir</value>
+    </property>
+    <property key="SaftReportMessageSeverity">
+    	<value xml:lang="en">Message severity</value>
+		<value xml:lang="pt">Severidade da mensagem</value>
+    </property>
+    <property key="SaftReportMessage">
+    	<value xml:lang="en">Message</value>
+		<value xml:lang="pt">Mensagem</value>
+    </property>
+    <property key="SaftJobCancelledMessage">
+    	<value xml:lang="en">This job has been cancelled.</value>
+		<value xml:lang="pt">O processo foi cancelado.</value>
+    </property>
+    <property key="SaftJobFailedMessage">
+    	<value xml:lang="en">An error occurred while trying to run the job. Please try again.</value>
+		<value xml:lang="pt">O processo foi interrompido com erro, pf. tente novamente mais tarde.</value>
+    </property>
+    <!-- Message Severity -->
+    <property key="SaftMessageSeverity_Error">
+    	<value xml:lang="en">Error</value>
+		<value xml:lang="pt">Erro</value>
+    </property>
+    <property key="SaftMessageSeverity_Warning">
+    	<value xml:lang="en">Warning</value>
+		<value xml:lang="pt">Aviso</value>
+    </property>
+    <property key="SaftMessageSeverity_Information">
+    	<value xml:lang="en">Information</value>
+		<value xml:lang="pt">Informação</value>
+    </property>
+    <!-- Job Status -->
+    <property key="SaftJobStatus_SERVICE_RUNNING">
+    	<value xml:lang="en">Running</value>
+		<value xml:lang="pt">A executar</value>
+    </property>
+    <property key="SaftJobStatus_SERVICE_PENDING">
+    	<value xml:lang="en">Pending</value>
+		<value xml:lang="pt">Pendente</value>
+    </property>
+    <property key="SaftJobStatus_SERVICE_QUEUED">
+    	<value xml:lang="en">Queued</value>
+		<value xml:lang="pt">Em espera</value>
+    </property>
+    <property key="SaftJobStatus_SERVICE_CANCELLED">
+    	<value xml:lang="en">Cancelled</value>
+		<value xml:lang="pt">Cancelado</value>
+    </property>
+    <property key="SaftJobStatus_SERVICE_CRASHED">
+    	<value xml:lang="en">Crashed</value>
+		<value xml:lang="pt">Interrompido com erro</value>
+    </property>
+    <property key="SaftJobStatus_SERVICE_FAILED">
+    	<value xml:lang="en">Failed</value>
+		<value xml:lang="pt">Terminado com erro</value>
+    </property>
+    <property key="SaftJobStatus_SERVICE_FINISHED">
+    	<value xml:lang="en">Finished</value>
+		<value xml:lang="pt">Terminado</value>
+    </property>
 </resource>

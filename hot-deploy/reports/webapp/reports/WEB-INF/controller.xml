@@ -33,7 +33,7 @@
 	
 	<request-map uri="getJobStatusIdJson">
 		<security https="true" auth="true" />
-		<event type="service" invoke="getJobStatusId" />
+		<event type="service" invoke="getJobStatusDisplayForSaft" />
 		<response name="success" type="request" value="json" />
 		<response name="error" type="request" value="json" />
 	</request-map>

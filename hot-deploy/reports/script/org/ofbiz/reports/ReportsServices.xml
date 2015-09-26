@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<simple-methods xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/simple-methods-v2.xsd">
-
-	<simple-method method-name="getJobStatusId" short-description="Retrieves the status id of a given job" >
-		<entity-one value-field="job" entity-name="JobSandbox" />
-		<field-to-result field="${groovy:uiLabelMap['SaftJobStatus_' + job.statusId]}" result-name="jobStatusId"/>
-	</simple-method>
-</simple-methods>

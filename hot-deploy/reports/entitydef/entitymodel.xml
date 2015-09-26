@@ -7,10 +7,21 @@
 		<field name="jobId" type="id" />
 		<field name="jobResult" type="very-long" />
 		<field name="jobResultBin" type="blob" />
-		<field name="jobResultMessages" type="very-long" />
 		<prim-key field="jobResultId" />
 		<relation rel-entity-name="JobSandbox" type="one">
 			<key-map field-name="jobId" rel-field-name="jobId" />
+		</relation>
+	</entity>
+	
+	<entity entity-name="JobSandboxResultMsg" package-name="org.ofbiz.service.schedule" title="Job Scheduler Sandbox Result Message Entity.">
+		<field name="jobResultMsgId" type="id-ne" />
+		<field name="jobResultId" type="id" />
+		<field name="jobResultMsgSeverity" type="short-varchar" />
+		<field name="jobResultMsgMap" type="long-varchar" />
+		<field name="jobResultMsgParams" type="very-long" />
+		<prim-key field="jobResultMsgId"/>
+		<relation rel-entity-name="JobSandboxResult" type="one">
+			<key-map field-name="jobResultId" rel-field-name="jobResultId" />
 		</relation>
 	</entity>
 	

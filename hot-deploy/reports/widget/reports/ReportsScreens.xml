@@ -75,9 +75,7 @@
 		<section>
 			<actions>
 				<!-- Expects the existence of a request parameter named "jobId" -->
-				<entity-one value-field="job" entity-name="JobSandbox" />
-				<get-related relation-name="JobSandboxResult" list="jobResults"
-					value-field="job" />
+				<script location="component://reports/webapp/reports/WEB-INF/actions/JobResultDisplayInternal.groovy"/>
 			</actions>
 			<widgets>
 				<section>
@@ -116,14 +114,6 @@
 											</html>
 										</platform-specific>
 									</widgets>
-									<fail-widgets>
-										<platform-specific>
-											<html>
-												<html-template
-													location="component://reports/webapp/reports/reports/ReportFinished.ftl" />
-											</html>
-										</platform-specific>
-									</fail-widgets>
 								</section>
 							</widgets>
 							<fail-widgets>
@@ -143,14 +133,6 @@
 													<include-screen name="JobDetailsDisplay" />
 												</container>
 											</widgets>
-											<fail-widgets>
-												<platform-specific>
-													<html>
-														<html-template
-															location="component://reports/webapp/reports/reports/ReportFinished.ftl" />
-													</html>
-												</platform-specific>
-											</fail-widgets>
 										</section>
 										<container>
 											<label text="${uiLabelMap.SaftJobCancelledMessage}" />
@@ -177,14 +159,6 @@
 															<include-screen name="JobDetailsDisplay" />
 														</container>
 													</widgets>
-													<fail-widgets>
-														<platform-specific>
-															<html>
-																<html-template
-																	location="component://reports/webapp/reports/reports/ReportFinished.ftl" />
-															</html>
-														</platform-specific>
-													</fail-widgets>
 												</section>
 												<container>
 													<label text="${uiLabelMap.SaftJobFailedMessage}" />
@@ -199,19 +173,11 @@
 												<section>
 													<condition>
 														<if-compare field="isAjaxRequest" operator="equals"
-															value="true" />
+															value="false" />
 													</condition>
 													<widgets>
-														<platform-specific>
-															<html>
-																<html-template
-																	location="component://reports/webapp/reports/reports/ReportFinished.ftl" />
-															</html>
-														</platform-specific>
-													</widgets>
-													<fail-widgets>
 														<include-screen name="JobDetailsDisplay" />
-													</fail-widgets>
+													</widgets>
 												</section>
 												<container id="ReportResultPlaceHolder">
 													<link target="DownloadReport" text="${uiLabelMap.SaftDownload}"

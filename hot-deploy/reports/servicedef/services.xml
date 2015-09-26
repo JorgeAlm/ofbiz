@@ -25,7 +25,7 @@ under the License.
     <version>1.0</version>
 
     <service name="generateSaft" engine="java" auth="true"
-            location="org.ofbiz.reports.ReportsServices" invoke="GenerateSaft">
+            location="org.ofbiz.reports.ReportsServices" invoke="generateSaft">
         <description>Generates the SAFT report</description>
         <!-- <permission-service service-name="partyBasePermissionCheck" main-action="CREATE"/> -->
         <attribute name="timePeriod" mode="IN" type="String" optional="false" />
@@ -39,10 +39,11 @@ under the License.
         <attribute name="saftContent" mode="OUT" type="String" />
     </service>
     
-    <service name="getJobStatusId" engine="simple" auth="true" invoke="getJobStatusId"
-    	location="component://reports/script/org/ofbiz/reports/ReportsServices.xml">
+    <service name="getJobStatusDisplayForSaft" engine="java" auth="true" invoke="getJobStatusDisplayForSaft"
+    	location="org.ofbiz.reports.ReportsServices">
     	<description>Retrieves the Job Status ID of a given job.</description>
     	<attribute name="jobId" mode="IN" type="String" optional="false" />
     	<attribute name="jobStatusId" mode="OUT" type="String" />
+    	<attribute name="jobStatusIdDisplay" mode="OUT" type="String" />
     </service>
 </services>

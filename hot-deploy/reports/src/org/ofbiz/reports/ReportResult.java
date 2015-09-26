@@ -2,6 +2,7 @@ package org.ofbiz.reports;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class ReportResult {
 	
@@ -36,8 +37,8 @@ public class ReportResult {
 	public void addMessage(ReportMessage message){
 		Messages.add(message);
 	}
-	public void addMessage(String message, ReportMessageSeverity severity){
-		Messages.add(new ReportMessage(message, severity));
+	public void addMessage(String message, Map<String, String> messageParameters, ReportMessageSeverity severity){
+		Messages.add(new ReportMessage(message, messageParameters, severity));
 	}
 	public void addAll(List<ReportMessage> messages){
 		Messages.addAll(messages);

@@ -92,6 +92,51 @@
     	<value xml:lang="en">An error occurred while trying to run the job. Please try again.</value>
 		<value xml:lang="pt">O processo foi interrompido com erro, pf. tente novamente mais tarde.</value>
     </property>
+    <!-- Service Messages -->
+	<property key="SaftUnableToFindTimePeriod">
+		<value xml:lang="en">Unable to find custom time period with id '${customTimePeriodId}'.</value>
+		<value xml:lang="pt">Não foi possível encontrar o período fiscal com o identificador '${customTimePeriodId}'.</value>
+	</property>
+	<property key="SaftFiscalYearStartDateEqualsEndDate">
+		<value xml:lang="en">The Fiscal year with id '${customTimePeriodId}' has a start date '${startDate}' that is equal to its end date '${endDate}'.</value>
+		<value xml:lang="pt">O ano fiscal com o identificador '${customTimePeriodId}' tem a a data de início '${startDate}' que é igual à sua data de término '${endDate}'.</value>
+	</property>
+	<property key="SaftFiscalYearStartDateAfterEndDate">
+		<value xml:lang="en">The Fiscal year with id '${customTimePeriodId}' has a start date '${startDate}' that starts after its end date '${endDate}'.</value>
+		<value xml:lang="pt">O ano fiscal com o identificador '${customTimePeriodId}' tem a a data de início '${startDate}' superiod à sua data de término '${endDate}'.</value>
+	</property>
+	<property key="SaftPartyTaxInfoNotFound">
+		<value xml:lang="en">No Tax Info found for party with id '${partyId}' and tax authority geo id '${taxAuthGeoId}' within the specified fiscal year.</value>
+		<value xml:lang="pt">Não foi possível encontrar a informação fiscal para o participante com o identificador '${partyId}' e identificador geográfico da autoridade fiscal '${taxAuthGeoId}' dentro dos limites do ano fiscal escolhido.</value>
+	</property>
+	<property key="SaftMoreThanOnePartyTaxInfoFound">
+		<value xml:lang="en">More than one Tax Info found for party with id '${partyId}' and tax authority geo id '${taxAuthGeoId}' within the specified fiscal year.</value>
+		<value xml:lang="pt">Multiplas informações fiscais encontradas para o participante com o identificador '${partyId}' e identificador geográfico da autoridade fiscal '${taxAuthGeoId}' dentro dos limites do ano fiscal escolhido.</value>
+	</property>
+	<property key="SaftNoActivePostalAddressFoundWillUseFirst">
+		<value xml:lang="en">No active postal address found for party with id '${partyId}', contact mechanism purpose id '${postalAddressPurposeType}' and country geo id '${countryGeoId}' within the specified fiscal year. If any postal address is specified for the party it will be used.</value>
+		<value xml:lang="pt">Não foi possível encontrar nenhuma morada ativa para o participante com o identificador '${partyId}', tipo de objetivo do contacto '${postalAddressPurposeType}' para o país com o identificador '${countryGeoId}' dentro dos limites do ano fiscal escolhido. Se o participante tiver alguma morada especificada, será utilizada.</value>
+	</property>
+	<property key="SaftNoActivePostalAddressFound">
+		<value xml:lang="en">No active postal address found for party with id '${partyId}' and country geo id '${countryGeoId}' within the specified fiscal year.</value>
+		<value xml:lang="pt">Não foi possível encontrar nenhuma morada ativa para o participante com o identificador '${partyId}' para o país com o identificador '${countryGeoId}' dentro dos limites do ano fiscal escolhido.</value>
+	</property>
+	<property key="SaftMoreThanOnePostalAddressFound">
+		<value xml:lang="en">More than one active postal address found for party with id '${partyId}' and country geo id '${countryGeoId}' within the specified fiscal year. The most recently updated one will be used.</value>
+		<value xml:lang="pt">Foram encontradas multiplas moradas ativas para o participante com o identificador '${partyId}' para o país com o identificador '${countryGeoId}' dentro dos limites do ano fiscal escolhido. A última morada atualizada será usada.</value>
+	</property>
+	<property key="SaftMoreThanOneContactMechanismFound">
+		<value xml:lang="en">More than one contact mechanism was found for party '${partyId}' with purpose type id '${contactPurposeType}'.</value>
+		<value xml:lang="pt">Mais do que um meio de contacto encontrado para o participante com o identificador '${partyId}' em tipo de objetivo '${contactPurposeType}'.</value>
+	</property>
+	<property key="SaftInvalidTaxNumber">
+		<value xml:lang="en">Tax Number '${taxNumber}' from party '${orgPartyId}' is invalid.</value>
+		<value xml:lang="pt">O identificador fiscal '${taxNumber}' do participante '${orgPartyId}' é inválido.</value>
+	</property>
+	<property key="SaftInvalidPostalCode">
+		<value xml:lang="en">Postal Code '${postalCode}' for party '${orgPartyId}' is invalid.</value>
+		<value xml:lang="pt">O código postal '${postalCode}' do participante '${orgPartyId}' é inválido.</value>
+	</property>
     <!-- Message Severity -->
     <property key="SaftMessageSeverity_Error">
     	<value xml:lang="en">Error</value>

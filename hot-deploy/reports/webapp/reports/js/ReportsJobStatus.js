@@ -11,7 +11,7 @@ function getJobStatus(placeHolderId, statusPlaceHolderId, jobId){
         type: 'POST', // If changed to GET will result in security error from OFBiz.
         data: { jobId: jobId },
         success: function(data) {
-        	jQuery('#' + statusPlaceHolderId).html(data.jobStatusId);
+        	jQuery('#' + statusPlaceHolderId).html(data.jobStatusIdDisplay);
         	
         	if (data.jobStatusId !== 'SERVICE_PENDING' && data.jobStatusId !== 'SERVICE_RUNNING' && data.jobStatusId !== 'SERVICE_QUEUED') {
         		StopJobStatusUpdateTimer();

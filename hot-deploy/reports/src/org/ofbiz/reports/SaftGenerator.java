@@ -64,6 +64,7 @@ public class SaftGenerator {
 			String emailPurposeType, String websitePurposeType) throws ParserConfigurationException, GenericEntityException, TransformerException{
 		
 		ReportResult result = new ReportResult();
+		Map<String, String> messageParams = FastMap.newInstance();
 		
 		if(UtilValidate.isEmpty(taxAuthGeoId)){
 			taxAuthGeoId = "PRT";
@@ -104,7 +105,8 @@ public class SaftGenerator {
 		GenericValue customTimePeriod = delegator.findOne("CustomTimePeriod", timePeriodFilter, false);
 		
 		if(customTimePeriod == null){
-			result.addMessage("Unable to find custom time period with id '" + customTimePeriodId + "'.", ReportMessageSeverity.Error);
+			messageParams.put("customTimePeriodId", customTimePeriodId);
+			result.addMessage("SaftUnableToFindTimePeriod", messageParams, ReportMessageSeverity.Error);
 			return result;
 		}
 		
@@ -116,10 +118,18 @@ public class SaftGenerator {
 		int comparisonValue = startDate.compareTo(endDate);
 		
 		if(comparisonValue == 0){
-			result.addMessage("The Fiscal year with id '" + customTimePeriodId + "' has a start date '" + startDate.toString() + "' that is equal to its end date '" + endDate.toString() + "'.", ReportMessageSeverity.Error);
+			messageParams.clear();
+			messageParams.put("customTimePeriodId", customTimePeriodId);
+			messageParams.put("startDate", startDate.toString());
+			messageParams.put("endDate", endDate.toString());
+			result.addMessage("SaftFiscalYearStartDateEqualsEndDate" + endDate.toString() + "'.", messageParams, ReportMessageSeverity.Error);
 			return result;
 		} else if (comparisonValue > 0){
-			result.addMessage("The Fiscal year with id '" + customTimePeriodId + "' has a start date '" + startDate.toString() + "' that starts after its end date '" + endDate.toString() + "'.", ReportMessageSeverity.Error);
+			messageParams.clear();
+			messageParams.put("customTimePeriodId", customTimePeriodId);
+			messageParams.put("startDate", startDate.toString());
+			messageParams.put("endDate", endDate.toString());
+			result.addMessage("SaftFiscalYearStartDateAfterEndDate", messageParams, ReportMessageSeverity.Error);
 			return result;
 		}
 
@@ -158,6 +168,7 @@ public class SaftGenerator {
 	
 	private static ReportResult GetPartyTaxInfo(Delegator delegator, String partyId, Timestamp startDate, Timestamp endDate, String taxAuthGeoId) throws GenericEntityException{
 		ReportResult result = new ReportResult();
+		Map<String, String> messageParams = FastMap.newInstance();
 		
 		List<EntityExpr> partyFilterList = FastList.newInstance();
 		partyFilterList.add(EntityCondition.makeCondition("partyId", EntityOperator.EQUALS, partyId));
@@ -182,11 +193,15 @@ public class SaftGenerator {
 		List<GenericValue> orgInfoList = delegator.findList("ReportSaftOrgInfo", orgInfoFilters, null, null, null, false);
 		
 		if(orgInfoList == null || orgInfoList.isEmpty()){
-			// TODO:JA Add error message
-			result.addMessage("No Tax Info found for party with id '" + partyId + "' and tax authority geo id '" + taxAuthGeoId + "' within the specified fiscal year.", ReportMessageSeverity.Error);
+			messageParams.clear();
+			messageParams.put("partyId", partyId);
+			messageParams.put("taxAuthGeoId", taxAuthGeoId);
+			result.addMessage("SaftPartyTaxInfoNotFound", messageParams, ReportMessageSeverity.Error);
 		} else if (orgInfoList.size() > 1){
-			// TODO:JA Add error message
-			result.addMessage("More than one Tax Info found for party with id '" + partyId + "' and tax authority geo id '" + taxAuthGeoId + "' within the specified fiscal year.", ReportMessageSeverity.Error);
+			messageParams.clear();
+			messageParams.put("partyId", partyId);
+			messageParams.put("taxAuthGeoId", taxAuthGeoId);
+			result.addMessage("SaftMoreThanOnePartyTaxInfoFound", messageParams, ReportMessageSeverity.Error);
 			result.setResult(orgInfoList.get(0));
 		} else {
 			result.setResult(orgInfoList.get(0));
@@ -197,6 +212,7 @@ public class SaftGenerator {
 	
 	private static ReportResult GetPartyAddress(Delegator delegator, String partyId, Timestamp startDate, Timestamp endDate, String postalAddressPurposeType, String countryGeoId) throws GenericEntityException {
 		ReportResult result = new ReportResult();
+		Map<String, String> messageParams = FastMap.newInstance();
 		
 		List<EntityCondition> filtersList = FastList.newInstance();
 		boolean hasUserFilter = false;
@@ -243,8 +259,11 @@ public class SaftGenerator {
 		List<GenericValue> postalAddressesList = delegator.findList("ReportSaftOrgPA", addressFilters, null, UtilMisc.toList("paLastUpdatedStamp DESC"), null, false);
 		
 		if(postalAddressesList.size() == 0 && hasUserFilter){
-			// TODO:JA Add error message
-			result.addMessage("No active postal address found for party with id '" + partyId + "', contact mechanism purpose id '" + postalAddressPurposeType + "' and country geo id '" + countryGeoId +"' within the specified fiscal year. If any postal address is specified for the party it will be used.", ReportMessageSeverity.Warning);
+			messageParams.clear();
+			messageParams.put("partyId", partyId);
+			messageParams.put("postalAddressPurposeType", postalAddressPurposeType);
+			messageParams.put("countryGeoId", countryGeoId);
+			result.addMessage("SaftNoActivePostalAddressFoundWillUseFirst", messageParams, ReportMessageSeverity.Warning);
 			
 			// Search without the last filter
 			filtersList.remove(filtersList.size() - 1);
@@ -254,9 +273,15 @@ public class SaftGenerator {
 		}
 		
 		if(postalAddressesList == null || postalAddressesList.isEmpty()){
-			result.addMessage("No active postal address found for party with id '" + partyId + "' and country geo id '" + countryGeoId + "' within the specified fiscal year.", ReportMessageSeverity.Error);
+			messageParams.clear();
+			messageParams.put("partyId", partyId);
+			messageParams.put("countryGeoId", countryGeoId);
+			result.addMessage("SaftNoActivePostalAddressFound", messageParams, ReportMessageSeverity.Error);
 		} else if (postalAddressesList.size() > 1){
-			result.addMessage("More than one active postal address found for party with id '" + partyId + "' and country geo id '" + countryGeoId + "' within the specified fiscal year. The most recently updated one will be used.", ReportMessageSeverity.Warning);
+			messageParams.clear();
+			messageParams.put("partyId", partyId);
+			messageParams.put("countryGeoId", countryGeoId);
+			result.addMessage("SaftMoreThanOnePostalAddressFound", messageParams, ReportMessageSeverity.Warning);
 			result.setResult(postalAddressesList.get(0));
 		} else {
 			result.setResult(postalAddressesList.get(0));
@@ -268,6 +293,7 @@ public class SaftGenerator {
 	private static ReportResult GetPartyTelecom(Delegator delegator, String partyId, Timestamp startDate, Timestamp endDate, String phonePurposeType, String faxPurposeType) throws GenericEntityException{
 		ReportResult result = new ReportResult();
 		Map<String, GenericValue> telecomResult = FastMap.newInstance();
+		Map<String, String> messageParams = FastMap.newInstance();
 		
 		EntityCondition partyFilter = EntityCondition.makeCondition("partyId", EntityOperator.EQUALS, partyId);
 		
@@ -299,7 +325,10 @@ public class SaftGenerator {
 			String contactPurposeType = contact.getString("contactMechPurposeTypeId");
 			
 			if((contactPurposeType.equals(phonePurposeType) && telecomResult.containsKey("phone")) || (contactPurposeType.equals(faxPurposeType) && telecomResult.containsKey("fax"))){
-				result.addMessage("More than one contact mechanism was found for party '" + partyId + "' with purpose type id '" + contactPurposeType +"'.", ReportMessageSeverity.Warning);
+				messageParams.clear();
+				messageParams.put("partyId", partyId);
+				messageParams.put("contactPurposeType", contactPurposeType);
+				result.addMessage("SaftMoreThanOneContactMechanismFound", messageParams, ReportMessageSeverity.Warning);
 			} else if(contactPurposeType.equals(phonePurposeType) && !telecomResult.containsKey("phone")){
 				telecomResult.put("phone", contact);
 			} else if(contactPurposeType.equals(faxPurposeType) && !telecomResult.containsKey("fax")){
@@ -316,6 +345,7 @@ public class SaftGenerator {
 	private static ReportResult GetPartyWebContacts(Delegator delegator, String partyId, Timestamp startDate, Timestamp endDate, String emailPurposeType, String websitePurposeType) throws GenericEntityException {
 		ReportResult result = new ReportResult();
 		Map<String, GenericValue> webContactResult = FastMap.newInstance();
+		Map<String, String> messageParams = FastMap.newInstance();
 		
 		EntityCondition partyFilter = EntityCondition.makeCondition("partyId", EntityOperator.EQUALS, partyId);
 		
@@ -346,7 +376,10 @@ public class SaftGenerator {
 		for (GenericValue contact: webContacts){
 			String contactPurposeType = contact.getString("contactMechPurposeTypeId");
 			if((contactPurposeType.equals(emailPurposeType) && webContactResult.containsKey("email")) || (contactPurposeType.equals(websitePurposeType) && webContactResult.containsKey("website"))){
-				result.addMessage("More than one contact mechanism was found for party '" + partyId + "' with purpose type id '" + contactPurposeType +"'.", ReportMessageSeverity.Warning);
+				messageParams.clear();
+				messageParams.put("partyId", partyId);
+				messageParams.put("contactPurposeType", contactPurposeType);
+				result.addMessage("SaftMoreThanOneContactMechanismFound", messageParams, ReportMessageSeverity.Warning);
 			} else if(contactPurposeType.equals(emailPurposeType) && !webContactResult.containsKey("email")){
 				webContactResult.put("email", contact);
 			} else if(contactPurposeType.equals(websitePurposeType) && !webContactResult.containsKey("website")){
@@ -364,6 +397,7 @@ public class SaftGenerator {
 			String taxAuthGeoId, String postalAddressPurposeType, String phonePurposeType, String faxPurposeType, 
 			String emailPurposeType, String websitePurposeType) throws GenericEntityException{
 		ReportResult result = new ReportResult();
+		Map<String, String> messageParams = FastMap.newInstance();
 		
 		ReportResult orgInfoResult = null;
 		ReportResult postalAddressResult = null;
@@ -443,7 +477,10 @@ public class SaftGenerator {
 			taxNumber = Integer.parseInt(taxId);
 			
 			if(taxNumber < 100000000){
-				result.addMessage("Tax Number '"+taxNumber+"' from party '" + orgPartyId + "' is invalid.", ReportMessageSeverity.Error);
+				messageParams.clear();
+				messageParams.put("taxNumber", taxNumber.toString());
+				messageParams.put("orgPartyId", orgPartyId);
+				result.addMessage("SaftInvalidTaxNumber", messageParams, ReportMessageSeverity.Error);
 				//taxNumber = 999999990;
 			}
 			
@@ -497,7 +534,10 @@ public class SaftGenerator {
 			if(ValidatePostalCode(postalCode)){
 				companyAddressElem.appendChild(CreateSimpleElement(doc, "PostalCode", postalCode));
 			} else {
-				result.addMessage("Postal Code '" + postalCode + "' for party '" + orgPartyId + "' is invalid.", ReportMessageSeverity.Error);
+				messageParams.clear();
+				messageParams.put("postalCode", postalCode);
+				messageParams.put("orgPartyId", orgPartyId);
+				result.addMessage("SaftInvalidPostalCode", messageParams, ReportMessageSeverity.Error);
 				//companyAddressElem.appendChild(CreateSimpleElement(doc, "PostalCode", "0000-000"));
 			}
 			
@@ -603,6 +643,7 @@ public class SaftGenerator {
 		List<ReportMessage> result = new ArrayList<ReportMessage>();
 		EntityExpr prtTaxAuthority = EntityCondition.makeCondition("taxAuthGeoId", EntityOperator.EQUALS, "PRT");
 		List<GenericValue> customers = delegator.findList("ReportSaftCustomers", prtTaxAuthority, null, UtilMisc.toList("-partyTaxId"), null, false);
+		Map<String, String> messageParams = FastMap.newInstance();
 		
 		for (GenericValue customer: customers){			
 			ReportResult postalAddressResult = null;
@@ -623,8 +664,10 @@ public class SaftGenerator {
 			taxNumber = Integer.parseInt(taxId);
 			
 			if(taxNumber < 100000000){
-				result.add(new ReportMessage("Tax Number '" + taxNumber + "' from party '" + partyId + "' is invalid.", ReportMessageSeverity.Error));
-				//taxNumber = 999999990;
+				messageParams.clear();
+				messageParams.put("taxNumber", taxNumber.toString());
+				messageParams.put("orgPartyId", partyId);
+				result.add(new ReportMessage("SaftInvalidTaxNumber", messageParams, ReportMessageSeverity.Error));
 			}
 			
 			Element customerElement = doc.createElement("Customer");
@@ -731,7 +774,10 @@ public class SaftGenerator {
 				if(ValidatePostalCode(postalCode)){
 					companyAddressElem.appendChild(CreateSimpleElement(doc, "PostalCode", postalCode));
 				} else {
-					result.add(new ReportMessage("Postal Code '" + postalCode + "' for party '" + partyId + "' is invalid.", ReportMessageSeverity.Error));
+					messageParams.clear();
+					messageParams.put("postalCode", postalCode);
+					messageParams.put("orgPartyId", partyId);
+					result.add(new ReportMessage("SaftInvalidPostalCode", messageParams, ReportMessageSeverity.Error));
 					//companyAddressElem.appendChild(CreateSimpleElement(doc, "PostalCode", "0000-000"));
 				}
 				

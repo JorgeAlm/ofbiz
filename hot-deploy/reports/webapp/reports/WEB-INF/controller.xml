@@ -46,7 +46,7 @@
 	<request-map uri="DownloadReport">
 		<security https="true" auth="true" />
 		<event type="java" path="org.ofbiz.reports.ReportsEvents"
-			invoke="DownloadReport" />
+			invoke="downloadReport" />
 		<response name="success" type="none" />
 		<response name="error" type="none" />
 	</request-map>

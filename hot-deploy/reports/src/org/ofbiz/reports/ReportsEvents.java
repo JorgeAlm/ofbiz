@@ -3,12 +3,9 @@ package org.ofbiz.reports;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.sql.Timestamp;
-import java.util.Calendar;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
-import java.util.UUID;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -27,11 +24,8 @@ import org.ofbiz.base.util.UtilMisc;
 import org.ofbiz.base.util.UtilValidate;
 import org.ofbiz.entity.Delegator;
 import org.ofbiz.entity.GenericValue;
-import org.ofbiz.entity.condition.EntityCondition;
 import org.ofbiz.entity.serialize.XmlSerializer;
-import org.ofbiz.entity.util.EntityListIterator;
 import org.ofbiz.service.LocalDispatcher;
-import org.ofbiz.service.calendar.RecurrenceRule;
 
 public class ReportsEvents {
 	public static final String module = ReportsEvents.class.getName();
@@ -91,7 +85,7 @@ public class ReportsEvents {
 		return "success";
 	}
 	
-	public static String DownloadReport(HttpServletRequest request,
+	public static String downloadReport(HttpServletRequest request,
 			HttpServletResponse response) throws ParserConfigurationException,
 			TransformerException, GeneralException {
 		LocalDispatcher dispatcher = (LocalDispatcher)request.getAttribute("dispatcher");
@@ -115,11 +109,11 @@ public class ReportsEvents {
 			Debug.logError("Problems with XML encoding: " + e, module);
 		}
 
-		// return the JSON String
+		// return the XML String
 		ServletOutputStream out;
 		try {
 			out = response.getOutputStream();
-			out.write(xmlString.getBytes());
+			out.write(xmlString.getBytes("UTF8"));
 			out.flush();
 		} catch (IOException e) {
 			Debug.logError(e, module);

@@ -1,28 +1,19 @@
 package org.ofbiz.reports;
 
-import java.io.IOException;
 import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.TimeZone;
-import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -32,15 +23,10 @@ import javax.xml.transform.stream.StreamResult;
 import javolution.util.FastList;
 import javolution.util.FastMap;
 
-import org.ofbiz.base.util.Debug;
-import org.ofbiz.base.util.GeneralException;
-import org.ofbiz.base.util.ObjectType;
 import org.ofbiz.base.util.StringUtil;
 import org.ofbiz.base.util.UtilDateTime;
-import org.ofbiz.base.util.UtilHttp;
 import org.ofbiz.base.util.UtilMisc;
 import org.ofbiz.base.util.UtilValidate;
-import org.ofbiz.common.JsLanguageFilesMapping.datejs;
 import org.ofbiz.entity.Delegator;
 import org.ofbiz.entity.GenericEntityException;
 import org.ofbiz.entity.GenericValue;
@@ -48,9 +34,6 @@ import org.ofbiz.entity.condition.EntityCondition;
 import org.ofbiz.entity.condition.EntityExpr;
 import org.ofbiz.entity.condition.EntityJoinOperator;
 import org.ofbiz.entity.condition.EntityOperator;
-import org.ofbiz.service.GenericResultWaiter;
-import org.ofbiz.service.LocalDispatcher;
-import org.ofbiz.service.calendar.RecurrenceRule;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
@@ -59,7 +42,7 @@ public class SaftGenerator {
 
 	public static final String module = SaftGenerator.class.getName();
 	
-	public static ReportResult GenerateReport(Delegator delegator, String customTimePeriodId,
+	public static ReportResult generateReport(Delegator delegator, String customTimePeriodId,
 			String taxAuthGeoId, String postalAddressPurposeType, String phonePurposeType, String faxPurposeType, 
 			String emailPurposeType, String websitePurposeType) throws ParserConfigurationException, GenericEntityException, TransformerException{
 		
@@ -122,7 +105,7 @@ public class SaftGenerator {
 			messageParams.put("customTimePeriodId", customTimePeriodId);
 			messageParams.put("startDate", startDate.toString());
 			messageParams.put("endDate", endDate.toString());
-			result.addMessage("SaftFiscalYearStartDateEqualsEndDate" + endDate.toString() + "'.", messageParams, ReportMessageSeverity.Error);
+			result.addMessage("SaftFiscalYearStartDateEqualsEndDate", messageParams, ReportMessageSeverity.Error);
 			return result;
 		} else if (comparisonValue > 0){
 			messageParams.clear();
@@ -133,7 +116,7 @@ public class SaftGenerator {
 			return result;
 		}
 
-		ReportResult headerResult = GenerateHeader(doc, delegator, startTimestamp, endTimestamp, organizationPartyId, taxAuthGeoId, 
+		ReportResult headerResult = generateHeader(doc, delegator, startTimestamp, endTimestamp, organizationPartyId, taxAuthGeoId, 
 				postalAddressPurposeType, phonePurposeType, faxPurposeType, emailPurposeType, websitePurposeType);
 		rootElement.appendChild((Element)headerResult.getResult());
 		if(headerResult.getMessages().size() > 0){
@@ -153,8 +136,7 @@ public class SaftGenerator {
 		// set up a transformer
 		TransformerFactory transfac = TransformerFactory.newInstance();
 		Transformer trans = transfac.newTransformer();
-		// trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-		// trans.setOutputProperty(OutputKeys.INDENT, "yes");
+		trans.setOutputProperty(OutputKeys.INDENT, "yes");
 
 		// create string from xml tree
 		StringWriter sw = new StringWriter();
@@ -166,7 +148,7 @@ public class SaftGenerator {
 		return result;
 	}
 	
-	private static ReportResult GetPartyTaxInfo(Delegator delegator, String partyId, Timestamp startDate, Timestamp endDate, String taxAuthGeoId) throws GenericEntityException{
+	private static ReportResult getPartyTaxInfo(Delegator delegator, String partyId, Timestamp startDate, Timestamp endDate, String taxAuthGeoId) throws GenericEntityException{
 		ReportResult result = new ReportResult();
 		Map<String, String> messageParams = FastMap.newInstance();
 		
@@ -210,7 +192,7 @@ public class SaftGenerator {
 		return result;
 	}
 	
-	private static ReportResult GetPartyAddress(Delegator delegator, String partyId, Timestamp startDate, Timestamp endDate, String postalAddressPurposeType, String countryGeoId) throws GenericEntityException {
+	private static ReportResult getPartyAddress(Delegator delegator, String partyId, Timestamp startDate, Timestamp endDate, String postalAddressPurposeType, String countryGeoId) throws GenericEntityException {
 		ReportResult result = new ReportResult();
 		Map<String, String> messageParams = FastMap.newInstance();
 		
@@ -290,7 +272,7 @@ public class SaftGenerator {
 		return result;
 	}
 	
-	private static ReportResult GetPartyTelecom(Delegator delegator, String partyId, Timestamp startDate, Timestamp endDate, String phonePurposeType, String faxPurposeType) throws GenericEntityException{
+	private static ReportResult getPartyTelecom(Delegator delegator, String partyId, Timestamp startDate, Timestamp endDate, String phonePurposeType, String faxPurposeType) throws GenericEntityException{
 		ReportResult result = new ReportResult();
 		Map<String, GenericValue> telecomResult = FastMap.newInstance();
 		Map<String, String> messageParams = FastMap.newInstance();
@@ -342,7 +324,7 @@ public class SaftGenerator {
 		return result;
 	}
 	
-	private static ReportResult GetPartyWebContacts(Delegator delegator, String partyId, Timestamp startDate, Timestamp endDate, String emailPurposeType, String websitePurposeType) throws GenericEntityException {
+	private static ReportResult getPartyWebContacts(Delegator delegator, String partyId, Timestamp startDate, Timestamp endDate, String emailPurposeType, String websitePurposeType) throws GenericEntityException {
 		ReportResult result = new ReportResult();
 		Map<String, GenericValue> webContactResult = FastMap.newInstance();
 		Map<String, String> messageParams = FastMap.newInstance();
@@ -393,7 +375,7 @@ public class SaftGenerator {
 		return result;
 	}
 
-	private static ReportResult GenerateHeader(Document doc, Delegator delegator, Timestamp startDate, Timestamp endDate, String orgPartyId, 
+	private static ReportResult generateHeader(Document doc, Delegator delegator, Timestamp startDate, Timestamp endDate, String orgPartyId, 
 			String taxAuthGeoId, String postalAddressPurposeType, String phonePurposeType, String faxPurposeType, 
 			String emailPurposeType, String websitePurposeType) throws GenericEntityException{
 		ReportResult result = new ReportResult();
@@ -419,7 +401,7 @@ public class SaftGenerator {
 		String fiscalYear = yearDateFormat.format(startDate);
 		
 		// Retrieve Data
-		orgInfoResult = GetPartyTaxInfo(delegator, orgPartyId, startDate, endDate, taxAuthGeoId);
+		orgInfoResult = getPartyTaxInfo(delegator, orgPartyId, startDate, endDate, taxAuthGeoId);
 		if(orgInfoResult.getMessages().size() > 0){
 			result.addAll(orgInfoResult.getMessages());
 		}
@@ -427,7 +409,7 @@ public class SaftGenerator {
 			orgInfo = (GenericValue)orgInfoResult.getResult();
 		}
 		
-		postalAddressResult = GetPartyAddress(delegator, orgPartyId, startDate, endDate, postalAddressPurposeType, taxAuthGeoId);
+		postalAddressResult = getPartyAddress(delegator, orgPartyId, startDate, endDate, postalAddressPurposeType, taxAuthGeoId);
 		if(postalAddressResult.getMessages().size() > 0){
 			result.addAll(postalAddressResult.getMessages());
 		}
@@ -435,7 +417,7 @@ public class SaftGenerator {
 			postalAddress = (GenericValue)postalAddressResult.getResult();
 		}
 		
-		telecomMapResult = GetPartyTelecom(delegator, orgPartyId, startDate, endDate, phonePurposeType, faxPurposeType);
+		telecomMapResult = getPartyTelecom(delegator, orgPartyId, startDate, endDate, phonePurposeType, faxPurposeType);
 		if(telecomMapResult.getMessages().size() > 0){
 			result.addAll(telecomMapResult.getMessages());
 		}
@@ -443,7 +425,7 @@ public class SaftGenerator {
 			telecomMap = (Map<String, GenericValue>)telecomMapResult.getResult();
 		}
 		
-		webcomMapResult = GetPartyWebContacts(delegator, orgPartyId, startDate, endDate, emailPurposeType, websitePurposeType);
+		webcomMapResult = getPartyWebContacts(delegator, orgPartyId, startDate, endDate, emailPurposeType, websitePurposeType);
 		if(webcomMapResult.getMessages().size() > 0){
 			result.addAll(webcomMapResult.getMessages());
 		}
@@ -700,7 +682,7 @@ public class SaftGenerator {
 			// customerElement.appendChild(CreateSimpleElement(doc, "Contact", "Carlos Antunes"));
 			
 			// Retrieve Data
-			postalAddressResult = GetPartyAddress(delegator, partyId, startDate, endDate, postalAddressPurposeType, taxAuthGeoId);
+			postalAddressResult = getPartyAddress(delegator, partyId, startDate, endDate, postalAddressPurposeType, taxAuthGeoId);
 			if(postalAddressResult.getMessages().size() > 0){
 				result.addAll(postalAddressResult.getMessages());
 			}
@@ -708,7 +690,7 @@ public class SaftGenerator {
 				postalAddress = (GenericValue)postalAddressResult.getResult();
 			}
 			
-			telecomMapResult = GetPartyTelecom(delegator, partyId, startDate, endDate, phonePurposeType, faxPurposeType);
+			telecomMapResult = getPartyTelecom(delegator, partyId, startDate, endDate, phonePurposeType, faxPurposeType);
 			if(telecomMapResult.getMessages().size() > 0){
 				result.addAll(telecomMapResult.getMessages());
 			}
@@ -716,7 +698,7 @@ public class SaftGenerator {
 				telecomMap = (Map<String, GenericValue>)telecomMapResult.getResult();
 			}
 			
-			webcomMapResult = GetPartyWebContacts(delegator, partyId, startDate, endDate, emailPurposeType, websitePurposeType);
+			webcomMapResult = getPartyWebContacts(delegator, partyId, startDate, endDate, emailPurposeType, websitePurposeType);
 			if(webcomMapResult.getMessages().size() > 0){
 				result.addAll(webcomMapResult.getMessages());
 			}

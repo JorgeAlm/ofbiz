@@ -6,15 +6,15 @@ import java.util.Map;
 
 public class ReportResult {
 	
-	private Object Result;
-	private List<ReportMessage> Messages;
+	private Object result;
+	private List<ReportMessage> messages;
 	
 	public ReportResult(){
 		this.setMessages(new ArrayList<ReportMessage>());
 	}
 	
 	public Boolean getSuccess() {
-		for(ReportMessage message : Messages){
+		for(ReportMessage message : messages){
 			if(message.getSeverity() == ReportMessageSeverity.Error){
 				return false;
 			}
@@ -23,24 +23,24 @@ public class ReportResult {
 		return true;
 	}
 	public Object getResult() {
-		return Result;
+		return this.result;
 	}
 	public void setResult(Object result) {
-		Result = result;
+		this.result = result;
 	}
 	public List<ReportMessage> getMessages() {
-		return Messages;
+		return this.messages;
 	}
 	public void setMessages(List<ReportMessage> messages) {
-		Messages = messages;
+		this.messages = messages;
 	}
 	public void addMessage(ReportMessage message){
-		Messages.add(message);
+		this.messages.add(message);
 	}
 	public void addMessage(String message, Map<String, String> messageParameters, ReportMessageSeverity severity){
-		Messages.add(new ReportMessage(message, messageParameters, severity));
+		this.messages.add(new ReportMessage(message, messageParameters, severity));
 	}
 	public void addAll(List<ReportMessage> messages){
-		Messages.addAll(messages);
+		this.messages.addAll(messages);
 	}
 }

@@ -1,6 +1,4 @@
 <entity-engine-xml>
-
-	<ReportType reportTypeId="SAFTPT" description="Saft-PT"/>
 	
 	<!-- Custom Time period definition for 2015/2016 fiscal year -->
 	<CustomTimePeriod organizationPartyId="Company"
@@ -18,10 +16,10 @@
     <PartyTaxAuthInfo partyId="DemoCustCompany" taxAuthGeoId="PRT" taxAuthPartyId="PRT_TAXMAN" fromDate="2001-05-13 00:00:00.000" partyTaxId="659357474" isExempt="N"/>
     <PartyTaxAuthInfo partyId="DemoCustomer" taxAuthGeoId="PRT" taxAuthPartyId="PRT_TAXMAN" fromDate="2001-05-13 00:00:00.000" partyTaxId="705413726" isExempt="N"/>
     
-    <PostalAddress contactMechId="9000" stateProvinceGeoId="_NA_" postalCode="4000-001" countryGeoId="PRT" />
-    <PostalAddress contactMechId="9011" stateProvinceGeoId="_NA_" postalCode="4000-002" countryGeoId="PRT" />
-    <PostalAddress contactMechId="9010" stateProvinceGeoId="_NA_" postalCode="4000-003" countryGeoId="PRT" />
-    <PostalAddress contactMechId="9015" stateProvinceGeoId="_NA_" postalCode="4000-004" countryGeoId="PRT" />    
+    <PostalAddress contactMechId="9000" address1="Rua Joaquim Mota" city="Lisboa" stateProvinceGeoId="_NA_" postalCode="4000-001" countryGeoId="PRT"  />
+    <PostalAddress contactMechId="9011" address1="Avenida do Parque" address2="Nº151, 2º Esq" city="Braga" stateProvinceGeoId="_NA_" postalCode="4000-002" countryGeoId="PRT" />
+    <PostalAddress contactMechId="9010" address1="Travessa do Ouriço" address2="Nº 71" city="Guimarães" stateProvinceGeoId="_NA_" postalCode="4000-003" countryGeoId="PRT" />
+    <PostalAddress contactMechId="9015" address1="Rua Fernando Souto Maior" city="Maia" stateProvinceGeoId="_NA_" postalCode="4000-004" countryGeoId="PRT" />    
     
     <PartyContactMechPurpose partyId="DemoCustAgent" contactMechId="9011" contactMechPurposeTypeId="BILLING_LOCATION" fromDate="2001-05-13 00:00:00.000"/>
 	

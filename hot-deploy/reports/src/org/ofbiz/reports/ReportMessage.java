@@ -6,35 +6,35 @@ import java.util.Map;
 @SuppressWarnings("serial")
 public class ReportMessage implements Serializable {
 	
-	private String MessageMapName;
-	private Map<String, String> MessageParameters;
-	private ReportMessageSeverity Severity;
+	private String messageMapName;
+	private Map<String, String> messageParameters;
+	private ReportMessageSeverity severity;
 	
 	public ReportMessage(){
 	}
 	
 	public ReportMessage(String messageMapName, Map<String, String> messageParameters, ReportMessageSeverity severity){
-		setMessageMapName(messageMapName);
-		setMessageParameters(messageParameters);
-		setSeverity(severity);
+		this.setMessageMapName(messageMapName);
+		this.setMessageParameters(messageParameters);
+		this.setSeverity(severity);
 	}
 	
 	public String getMessageMapName(){
-		return MessageMapName;
+		return this.messageMapName;
 	}
 	public void setMessageMapName(String messageMapName){
-		MessageMapName = messageMapName;
+		this.messageMapName = messageMapName;
 	}
 	public Map<String, ?> getMessageParameters(){
-		return MessageParameters;
+		return this.messageParameters;
 	}
 	public void setMessageParameters(Map<String, String> messageParameters){
-		MessageParameters = messageParameters;
+		this.messageParameters = messageParameters;
 	}
 	public ReportMessageSeverity getSeverity(){
-		return Severity;
+		return this.severity;
 	}
 	public void setSeverity(ReportMessageSeverity severity){
-		Severity = severity;
+		this.severity = severity;
 	}
 }

@@ -2,11 +2,9 @@ package org.ofbiz.reports;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -20,11 +18,9 @@ import org.ofbiz.base.util.UtilValidate;
 import org.ofbiz.entity.Delegator;
 import org.ofbiz.entity.GenericEntityException;
 import org.ofbiz.entity.GenericValue;
-import org.ofbiz.entity.condition.EntityCondition;
 import org.ofbiz.entity.serialize.SerializeException;
 import org.ofbiz.entity.serialize.XmlSerializer;
 import org.ofbiz.entity.transaction.TransactionUtil;
-import org.ofbiz.entity.util.EntityListIterator;
 import org.ofbiz.reports.ReportResult;
 import org.ofbiz.service.DispatchContext;
 import org.ofbiz.service.GenericServiceException;
@@ -104,16 +100,13 @@ public class ReportsServices {
 		
 		ReportResult saftResult = null;
 		try {
-			saftResult = SaftGenerator.GenerateReport(delegator, customTimePeriodId, taxAuthGeoId, postalAddressPurposeTypeId,
+			saftResult = SaftGenerator.generateReport(delegator, customTimePeriodId, taxAuthGeoId, postalAddressPurposeTypeId,
 					phonePurposeTypeId, faxPurposeTypeId, emailPurposeTypeId, websitePurposeTypeId);			
 		} catch (GenericEntityException e) {
-			// TODO Auto-generated catch block
 			ServiceUtil.returnError(e.getMessage() + e.getStackTrace().toString());
 		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
 			ServiceUtil.returnError(e.getMessage() + e.getStackTrace().toString());
 		} catch (TransformerException e) {
-			// TODO Auto-generated catch block
 			ServiceUtil.returnError(e.getMessage() + e.getStackTrace().toString());
 		}
 				

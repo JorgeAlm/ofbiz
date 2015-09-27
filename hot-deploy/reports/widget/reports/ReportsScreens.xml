@@ -22,7 +22,7 @@
 	<screen name="ReportSaftPending">
 		<section>
 			<actions>
-				<set field="layoutSettings.javaScripts[]" value="/reports/js/ReportsJobStatus.js"
+				<set field="layoutSettings.javaScripts[]" value="/reports/js/ReportsQueueStatus.js"
 					global="true" />
 				<set field="isAjaxRequest" type="Boolean" value="false" global="true" />
 				<set field="headerItem" value="reportsaft"/>
@@ -31,32 +31,29 @@
 				<decorator-screen name="main-decorator"
 					location="${parameters.mainDecoratorLocation}">
 					<decorator-section name="body">
-						<include-screen name="JobResultDisplayInternal" />
+						<include-screen name="ReportResultDisplayInternal" />
 					</decorator-section>
 				</decorator-screen>
 			</widgets>
 		</section>
 	</screen>
 
-	<screen name="JobDetailsDisplay">
+	<screen name="ReportQueueDetailsDisplay">
 		<section>
 			<widgets>
 				<container>
-					<label text="${uiLabelMap.SaftJobId}: ${job.jobId}" />
+					<label text="${uiLabelMap.ReportQueueId}: ${reportQueue.reportQueueId}" />
 				</container>
 				<container>
-					<label text="${uiLabelMap.SaftJobName}: ${job.jobName}" />
-				</container>
-				<container>
-					<label text="${uiLabelMap.SaftJobStatus}: " />
-					<label text="${groovy:uiLabelMap['SaftJobStatus_' + job.statusId]}"
+					<label text="${uiLabelMap.ReportQueueStatus}: " />
+					<label text="${groovy:uiLabelMap['ReportQueueStatus_' + reportQueue.reportQueueStatusId]}"
 						id="StatusPlaceHolder" />
 				</container>
 			</widgets>
 		</section>
 	</screen>
 
-	<screen name="JobResultDisplay">
+	<screen name="ReportResultDisplay">
 		<section>
 			<actions>
 				<property-map resource="CommonUiLabels" map-name="uiLabelMap"
@@ -66,34 +63,34 @@
 				<set field="isAjaxRequest" type="Boolean" value="true" global="true" />
 			</actions>
 			<widgets>
-				<include-screen name="JobResultDisplayInternal" />
+				<include-screen name="ReportResultDisplayInternal" />
 			</widgets>
 		</section>
 	</screen>
 
-	<screen name="JobResultDisplayInternal">
+	<screen name="ReportResultDisplayInternal">
 		<section>
 			<actions>
-				<!-- Expects the existence of a request parameter named "jobId" -->
-				<script location="component://reports/webapp/reports/WEB-INF/actions/JobResultDisplayInternal.groovy"/>
+				<!-- Expects the existence of a request parameter named "reportQueueId" -->
+				<script location="component://reports/webapp/reports/WEB-INF/actions/ReportResultDisplayInternal.groovy"/>
 			</actions>
 			<widgets>
 				<section>
 					<condition>
 						<not>
-							<if-empty field="job" />
+							<if-empty field="reportQueue" />
 						</not>
 					</condition>
 					<widgets>
 						<section>
 							<condition>
 								<or>
-									<if-compare field="job.statusId" operator="equals"
-										value="SERVICE_RUNNING" />
-									<if-compare field="job.statusId" operator="equals"
-										value="SERVICE_PENDING" />
-									<if-compare field="job.statusId" operator="equals"
-										value="SERVICE_QUEUED" />
+									<if-compare field="reportQueue.reportQueueStatusId" operator="equals"
+										value="RUNNING" />
+									<if-compare field="reportQueue.reportQueueStatusId" operator="equals"
+										value="PENDING" />
+									<if-compare field="reportQueue.reportQueueStatusId" operator="equals"
+										value="QUEUED" />
 								</or>
 							</condition>
 							<widgets>
@@ -103,7 +100,7 @@
 											value="false" />
 									</condition>
 									<widgets>
-										<include-screen name="JobDetailsDisplay" />
+										<include-screen name="ReportQueueDetailsDisplay" />
 										<container id="ReportResultPlaceHolder">
 											<image src="/images/ajax-loader.gif" />
 										</container>
@@ -119,8 +116,8 @@
 							<fail-widgets>
 								<section>
 									<condition>
-										<if-compare field="job.statusId" operator="equals"
-											value="SERVICE_CANCELLED" />
+										<if-compare field="reportQueue.reportQueueStatusId" operator="equals"
+											value="CANCELLED" />
 									</condition>
 									<widgets>
 										<section>
@@ -130,22 +127,22 @@
 											</condition>
 											<widgets>
 												<container>
-													<include-screen name="JobDetailsDisplay" />
+													<include-screen name="ReportQueueDetailsDisplay" />
 												</container>
 											</widgets>
 										</section>
 										<container>
-											<label text="${uiLabelMap.SaftJobCancelledMessage}" />
+											<label text="${uiLabelMap.SaftQueueCancelledMessage}" />
 										</container>
 									</widgets>
 									<fail-widgets>
 										<section>
 											<condition>
 												<or>
-													<if-compare field="job.statusId" operator="equals"
-														value="SERVICE_CRASHED" />
-													<if-compare field="job.statusId" operator="equals"
-														value="SERVICE_FAILED" />
+													<if-compare field="reportQueue.reportQueueStatusId" operator="equals"
+														value="CRASHED" />
+													<if-compare field="reportQueue.reportQueueStatusId" operator="equals"
+														value="FAILED" />
 												</or>
 											</condition>
 											<widgets>
@@ -156,15 +153,15 @@
 													</condition>
 													<widgets>
 														<container>
-															<include-screen name="JobDetailsDisplay" />
+															<include-screen name="ReportQueueDetailsDisplay" />
 														</container>
 													</widgets>
 												</section>
 												<container>
-													<label text="${uiLabelMap.SaftJobFailedMessage}" />
+													<label text="${uiLabelMap.SaftQueueFailedMessage}" />
 													<section>
 														<widgets>
-															<include-screen name="JobResultMessages" />
+															<include-screen name="ReportValidationMessages" />
 														</widgets>
 													</section>
 												</container>
@@ -176,17 +173,17 @@
 															value="false" />
 													</condition>
 													<widgets>
-														<include-screen name="JobDetailsDisplay" />
+														<include-screen name="ReportQueueDetailsDisplay" />
 													</widgets>
 												</section>
 												<container id="ReportResultPlaceHolder">
 													<link target="DownloadReport" text="${uiLabelMap.SaftDownload}"
 														style="buttontext">
-														<parameter param-name="jobId" from-field="parameters.jobId" />
+														<parameter param-name="reportId" from-field="report.reportId" />
 													</link>
 												</container>
 												<container>
-													<include-screen name="JobResultMessages" />
+													<include-screen name="ReportValidationMessages" />
 												</container>
 											</fail-widgets>
 										</section>
@@ -197,7 +194,7 @@
 					</widgets>
 					<fail-widgets>
 						<container>
-							<label text="Unable to find requested job." />
+							<label text="Unable to find requested queue." />
 						</container>
 						<section>
 							<condition>
@@ -219,11 +216,11 @@
 		</section>
 	</screen>
 
-	<screen name="JobResultMessages">
+	<screen name="ReportValidationMessages">
 		<section>
 			<condition>
 				<not>
-					<if-empty field="jobResults" />
+					<if-empty field="reportValidationMessages" />
 				</not>
 			</condition>
 			<widgets>

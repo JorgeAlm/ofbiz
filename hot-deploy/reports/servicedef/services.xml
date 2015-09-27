@@ -23,6 +23,12 @@ under the License.
     <description>Reports Component Services</description>
     <vendor>JAlmeida</vendor>
     <version>1.0</version>
+    
+    <service name="processReportQueue" engine="java" auth="true"
+    		location="org.ofbiz.reports.ReportsServices" invoke="processReportQueue">
+    	<description>Process Report Queue entities</description>
+    	<attribute name="reportQueueId" mode="IN" type="String" optional="false" />
+    </service>
 
     <service name="generateSaft" engine="java" auth="true"
             location="org.ofbiz.reports.ReportsServices" invoke="generateSaft">
@@ -35,15 +41,15 @@ under the License.
 		<attribute name="faxPurposeTypeId" mode="IN" type="String"/>
 		<attribute name="emailPurposeTypeId" mode="IN" type="String"/>
 		<attribute name="websitePurposeTypeId" mode="IN" type="String"/>
-		<attribute name="jobName" mode="IN" type="String"/>
-        <attribute name="saftContent" mode="OUT" type="String" />
+        <attribute name="saftContent" mode="OUT" type="String" optional="true" />
+        <attribute name="saftMessages" mode="OUT" type="java.util.List" optional="true" />
     </service>
     
-    <service name="getJobStatusDisplayForSaft" engine="java" auth="true" invoke="getJobStatusDisplayForSaft"
+    <service name="getReportStatusDisplayForSaft" engine="java" auth="true" invoke="getReportStatusDisplayForSaft"
     	location="org.ofbiz.reports.ReportsServices">
-    	<description>Retrieves the Job Status ID of a given job.</description>
-    	<attribute name="jobId" mode="IN" type="String" optional="false" />
-    	<attribute name="jobStatusId" mode="OUT" type="String" />
-    	<attribute name="jobStatusIdDisplay" mode="OUT" type="String" />
+    	<description>Retrieves the Report Queue Status ID of a given report queue entry.</description>
+    	<attribute name="reportQueueId" mode="IN" type="String" optional="false" />
+    	<attribute name="reportQueueStatusId" mode="OUT" type="String" />
+    	<attribute name="reportQueueStatusIdDisplay" mode="OUT" type="String" />
     </service>
 </services>

@@ -60,16 +60,16 @@
     	<value xml:lang="en">SAFT-PT</value>
     </property>
     <!-- Reports Screens -->
-    <property key="SaftJobId">
-    	<value xml:lang="en">Job identifier</value>
+    <property key="ReportQueueId">
+    	<value xml:lang="en">Process identifier</value>
 		<value xml:lang="pt">Id do processo</value>
     </property>
     <property key="SaftJobName">
     	<value xml:lang="en">Job name</value>
 		<value xml:lang="pt">Nome do processo</value>
     </property>
-    <property key="SaftJobStatus">
-    	<value xml:lang="en">Job status</value>
+    <property key="ReportQueueStatus">
+    	<value xml:lang="en">Process status</value>
 		<value xml:lang="pt">Estado do processo</value>
     </property>
     <property key="SaftDownload">
@@ -84,12 +84,12 @@
     	<value xml:lang="en">Message</value>
 		<value xml:lang="pt">Mensagem</value>
     </property>
-    <property key="SaftJobCancelledMessage">
-    	<value xml:lang="en">This job has been cancelled.</value>
+    <property key="SaftQueueCancelledMessage">
+    	<value xml:lang="en">This process has been cancelled.</value>
 		<value xml:lang="pt">O processo foi cancelado.</value>
     </property>
-    <property key="SaftJobFailedMessage">
-    	<value xml:lang="en">An error occurred while trying to run the job. Please try again.</value>
+    <property key="SaftQueueFailedMessage">
+    	<value xml:lang="en">An error occurred while trying to run the process. Please try again.</value>
 		<value xml:lang="pt">O processo foi interrompido com erro, pf. tente novamente mais tarde.</value>
     </property>
     <!-- Service Messages -->
@@ -150,32 +150,32 @@
     	<value xml:lang="en">Information</value>
 		<value xml:lang="pt">Informação</value>
     </property>
-    <!-- Job Status -->
-    <property key="SaftJobStatus_SERVICE_RUNNING">
+    <!-- Report Queue Status -->
+    <property key="ReportQueueStatus_RUNNING">
     	<value xml:lang="en">Running</value>
 		<value xml:lang="pt">A executar</value>
     </property>
-    <property key="SaftJobStatus_SERVICE_PENDING">
+    <property key="ReportQueueStatus_PENDING">
     	<value xml:lang="en">Pending</value>
 		<value xml:lang="pt">Pendente</value>
     </property>
-    <property key="SaftJobStatus_SERVICE_QUEUED">
+    <property key="ReportQueueStatus_QUEUED">
     	<value xml:lang="en">Queued</value>
 		<value xml:lang="pt">Em espera</value>
     </property>
-    <property key="SaftJobStatus_SERVICE_CANCELLED">
+    <property key="ReportQueueStatus_CANCELLED">
     	<value xml:lang="en">Cancelled</value>
 		<value xml:lang="pt">Cancelado</value>
     </property>
-    <property key="SaftJobStatus_SERVICE_CRASHED">
+    <property key="ReportQueueStatus_CRASHED">
     	<value xml:lang="en">Crashed</value>
 		<value xml:lang="pt">Interrompido com erro</value>
     </property>
-    <property key="SaftJobStatus_SERVICE_FAILED">
+    <property key="ReportQueueStatus_FAILED">
     	<value xml:lang="en">Failed</value>
 		<value xml:lang="pt">Terminado com erro</value>
     </property>
-    <property key="SaftJobStatus_SERVICE_FINISHED">
+    <property key="ReportQueueStatus_FINISHED">
     	<value xml:lang="en">Finished</value>
 		<value xml:lang="pt">Terminado</value>
     </property>

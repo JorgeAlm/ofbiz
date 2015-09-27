@@ -1,5 +1,5 @@
 <script type="text/javascript">
    jQuery(document).ready( function() {
-        StartJobStatusUpdateTimer('ReportResultPlaceHolder', 'StatusPlaceHolder', ${job.jobId});
+        StartReportStatusUpdateTimer('ReportResultPlaceHolder', 'StatusPlaceHolder', ${reportQueue.reportQueueId});
    });
 </script>

@@ -1,5 +1,6 @@
 package org.ofbiz.reports;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.sql.Timestamp;
@@ -27,6 +28,7 @@ import org.ofbiz.base.util.UtilValidate;
 import org.ofbiz.entity.Delegator;
 import org.ofbiz.entity.GenericValue;
 import org.ofbiz.entity.condition.EntityCondition;
+import org.ofbiz.entity.serialize.XmlSerializer;
 import org.ofbiz.entity.util.EntityListIterator;
 import org.ofbiz.service.LocalDispatcher;
 import org.ofbiz.service.calendar.RecurrenceRule;
@@ -34,9 +36,9 @@ import org.ofbiz.service.calendar.RecurrenceRule;
 public class ReportsEvents {
 	public static final String module = ReportsEvents.class.getName();
 
-	public static String GenerateReport(HttpServletRequest request,
+	public static String queueSaftPtReport(HttpServletRequest request,
 			HttpServletResponse response) throws ParserConfigurationException,
-			TransformerException, GeneralException {
+			TransformerException, GeneralException, FileNotFoundException, IOException {
 
 		HttpSession session = request.getSession();
         GenericValue userLogin = (GenericValue)session.getAttribute("userLogin");
@@ -66,25 +68,25 @@ public class ReportsEvents {
 		mapIn.put("faxPurposeTypeId", faxPurposeTypeId);
 		mapIn.put("emailPurposeTypeId", emailPurposeTypeId);
 		mapIn.put("websitePurposeTypeId", websitePurposeTypeId);
+        
+        String reportQueueId = delegator.getNextSeqId("ReportQueue");
+		GenericValue reportQueue = delegator.makeValue("ReportQueue");
+		reportQueue.put("reportQueueId", reportQueueId);
+		reportQueue.put("reportTypeId", "SAFTPT");
+		reportQueue.put("reportQueueStatusId", "QUEUED");
+		reportQueue.put("reportQueueParams", XmlSerializer.serialize(mapIn));
 		
+		delegator.create(reportQueue);
+		
+		mapIn.clear();
 		mapIn.put("locale", locale);
         mapIn.put("userLogin", userLogin);
         mapIn.put("timeZone", timeZone);
-		
-		UUID uniqueId = UUID.randomUUID();
-		String jobName = "SAFT-"+uniqueId.toString();
-		Timestamp original = UtilDateTime.nowTimestamp();
-        Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(original.getTime());
-        cal.add(Calendar.SECOND, 10);
-        Timestamp later = new Timestamp(cal.getTime().getTime());
-        mapIn.put("jobName", jobName);
-		
-        dispatcher.schedule(jobName, "pool", "generateSaft", mapIn, later.getTime(), RecurrenceRule.HOURLY, 1, 1, 0, 2);
+        mapIn.put("reportQueueId", reportQueueId);
         
-        EntityListIterator eli = delegator.find("JobSandbox", EntityCondition.makeCondition(UtilMisc.toMap("jobName", jobName)), null, UtilMisc.toSet("jobId"), null, null);
-		GenericValue job = eli.next();
-		request.setAttribute("jobId", job.getString("jobId"));
+        dispatcher.schedule("processReportQueue", mapIn, UtilDateTime.nowTimestamp().getTime());
+        
+		request.setAttribute("reportQueueId", reportQueueId);
 
 		return "success";
 	}
@@ -95,13 +97,12 @@ public class ReportsEvents {
 		LocalDispatcher dispatcher = (LocalDispatcher)request.getAttribute("dispatcher");
 		Delegator delegator = dispatcher.getDelegator();
 		
-		String jobId = request.getParameter("jobId").toString();
+		String reportId = request.getParameter("reportId").toString();
 		String xmlString = "";
 		
-		GenericValue job = delegator.findOne("JobSandbox", UtilMisc.toMap("jobId", jobId), false);
-		GenericValue jobResult = delegator.getRelated("JobSandboxResult", null, null, job, false).get(0);
+		GenericValue job = delegator.findOne("Report", UtilMisc.toMap("reportId", reportId), false);
 		
-		xmlString = jobResult.getString("jobResult");
+		xmlString = job.getString("reportData");
 		
 		// set the Xml content type
 		response.setContentType("application/xml");

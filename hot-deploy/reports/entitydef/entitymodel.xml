@@ -2,26 +2,47 @@
 <entitymodel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="http://www.ofbiz.org/dtds/entitymodel.xsd">
 	
-	<entity entity-name="JobSandboxResult" package-name="org.ofbiz.service.schedule" title="Job Scheduler Sandbox Result Entity.">
-		<field name="jobResultId" type="id-ne" />
-		<field name="jobId" type="id" />
-		<field name="jobResult" type="very-long" />
-		<field name="jobResultBin" type="blob" />
-		<prim-key field="jobResultId" />
-		<relation rel-entity-name="JobSandbox" type="one">
-			<key-map field-name="jobId" rel-field-name="jobId" />
+	<entity entity-name="ReportType" package-name="org.ofbiz.reports" title="Report Type entity">
+		<field name="reportTypeId" type="id-ne" />
+		<field name="description" type="description" />
+		<prim-key field="reportTypeId" />
+	</entity>
+	
+	<entity entity-name="Report" package-name="org.ofbiz.reports" title="Report entity">
+		<field name="reportId" type="id-ne" />
+		<field name="reportTypeId" type="id-ne" />
+		<field name="reportData" type="very-long" />
+		<field name="reportDataBin" type="blob" />
+		<prim-key field="reportId"/>
+		<relation rel-entity-name="ReportType" type="one">
+			<key-map field-name="reportTypeId" rel-field-name="reportTypeId"/>
 		</relation>
 	</entity>
 	
-	<entity entity-name="JobSandboxResultMsg" package-name="org.ofbiz.service.schedule" title="Job Scheduler Sandbox Result Message Entity.">
-		<field name="jobResultMsgId" type="id-ne" />
-		<field name="jobResultId" type="id" />
-		<field name="jobResultMsgSeverity" type="short-varchar" />
-		<field name="jobResultMsgMap" type="long-varchar" />
-		<field name="jobResultMsgParams" type="very-long" />
-		<prim-key field="jobResultMsgId"/>
-		<relation rel-entity-name="JobSandboxResult" type="one">
-			<key-map field-name="jobResultId" rel-field-name="jobResultId" />
+	<entity entity-name="ReportValidationMsgs" package-name="org.ofbiz.reports" title="Report Validation Messages entity">
+		<field name="messageId" type="id-ne"/>
+		<field name="reportId" type="id-ne" />
+		<field name="messageSeverity" type="short-varchar" />
+		<field name="messageMapName" type="long-varchar" />
+		<field name="messageParameters" type="very-long" />
+		<prim-key field="messageId" />
+		<relation rel-entity-name="Report" type="one">
+			<key-map field-name="reportId" rel-field-name="reportId"/>
+		</relation>
+	</entity>
+	
+	<entity entity-name="ReportQueue" package-name="org.ofbiz.reports" title="Report Queue entity">
+		<field name="reportQueueId" type="id-ne" />
+		<field name="reportTypeId" type="id-ne" />
+		<field name="reportQueueStatusId" type="short-varchar" />
+		<field name="reportQueueParams" type="very-long" />
+		<field name="reportId" type="id" />
+		<prim-key field="reportQueueId" />
+		<relation rel-entity-name="ReportType" type="one">
+			<key-map field-name="reportTypeId" rel-field-name="reportTypeId"/>
+		</relation>
+		<relation rel-entity-name="Report" type="one">
+			<key-map field-name="reportId" rel-field-name="reportId"/>
 		</relation>
 	</entity>
 	

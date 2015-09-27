@@ -19,9 +19,9 @@
 	<request-map uri="GenerateSaft">
 		<security https="true" auth="true" />
 		<event type="java" path="org.ofbiz.reports.ReportsEvents"
-			invoke="GenerateReport" />
+			invoke="queueSaftPtReport" />
 		<response name="success" type="request-redirect" value="ReportSaftPending">
-			<redirect-parameter name="jobId" from="jobId" />
+			<redirect-parameter name="reportQueueId" from="reportQueueId" />
 		</response>
 		<response name="redirectToForm" type="request-redirect-noparam" value="ReportSaft" />
 	</request-map>
@@ -31,16 +31,16 @@
 		<response name="success" type="view" value="ReportSaftPending"/>
 	</request-map>
 	
-	<request-map uri="getJobStatusIdJson">
+	<request-map uri="getReportStatusIdJson">
 		<security https="true" auth="true" />
-		<event type="service" invoke="getJobStatusDisplayForSaft" />
+		<event type="service" invoke="getReportStatusDisplayForSaft" />
 		<response name="success" type="request" value="json" />
 		<response name="error" type="request" value="json" />
 	</request-map>
 	
-	<request-map uri="getJobResultDisplay">
+	<request-map uri="getReportResultDisplay">
 		<security https="true" auth="true" />
-		<response name="success" type="view" value="JobResultDisplay"/>
+		<response name="success" type="view" value="ReportResultDisplay"/>
 	</request-map>
 	
 	<request-map uri="DownloadReport">
@@ -61,7 +61,7 @@
 	<view-map name="ReportSaftPending" type="screen"
 		page="component://reports/widget/reports/ReportsScreens.xml#ReportSaftPending" />
 		
-	<view-map name="JobResultDisplay" type="screen"
-		page="component://reports/widget/reports/ReportsScreens.xml#JobResultDisplay" />
+	<view-map name="ReportResultDisplay" type="screen"
+		page="component://reports/widget/reports/ReportsScreens.xml#ReportResultDisplay" />
 	<!-- end of view mappings -->
 </site-conf>

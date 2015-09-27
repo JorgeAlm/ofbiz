@@ -1,5 +1,7 @@
 <entity-engine-xml>
 
+	<ReportType reportTypeId="SAFTPT" description="Saft-PT"/>
+	
 	<!-- Custom Time period definition for 2015/2016 fiscal year -->
 	<CustomTimePeriod organizationPartyId="Company"
 		customTimePeriodId="6020" periodTypeId="FISCAL_YEAR" fromDate="2015-01-01"

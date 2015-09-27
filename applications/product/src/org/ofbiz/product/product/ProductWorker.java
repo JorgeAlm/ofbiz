@@ -1106,6 +1106,7 @@ nextProd:
                 // copy the supplier
                 List<GenericValue> supplierProducts = delegator.findByAnd("SupplierProduct", UtilMisc.toMap("productId", productId), null, true);
                 for (GenericValue supplierProduct: supplierProducts) {
+                    supplierProduct = (GenericValue) supplierProduct.clone();
                     supplierProduct.set("productId",  product.getString("productId"));
                     supplierProduct.create();
                 }
@@ -1113,6 +1114,7 @@ nextProd:
                 // copy the content
                 List<GenericValue> productContents = delegator.findByAnd("ProductContent", UtilMisc.toMap("productId", productId), null, true);
                 for (GenericValue productContent: productContents) {
+                    productContent = (GenericValue) productContent.clone();
                     productContent.set("productId",  product.getString("productId"));
                     productContent.create();
                 }

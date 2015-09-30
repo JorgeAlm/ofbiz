@@ -1,0 +1,19 @@
+<simple-methods xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/simple-methods-v2.xsd">
+    
+    <!-- Reports events -->
+    <simple-method method-name="deleteReport" short-description="Delete Report">
+    	<entity-one value-field="report" entity-name="Report" />
+    	<if-empty field="report">
+    		<add-error>
+    			<fail-message message="${uiLabelMap.ReportNotFoundErrorMessage}"/>
+    		</add-error>
+    		<else>
+    			<remove-related relation-name="ReportValidationMsgs" value-field="report"/>
+    			<remove-related relation-name="ReportQueue" value-field="report" />
+    			<remove-value value-field="report"/>
+    			<set field="_event_message_" value="${uiLabelMap.ReportDeletedSuccess}"/>
+    		</else>
+    	</if-empty>
+    </simple-method>
+</simple-methods>

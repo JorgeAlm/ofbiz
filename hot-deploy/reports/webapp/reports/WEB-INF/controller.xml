@@ -1,14 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <site-conf xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="http://www.ofbiz.org/dtds/site-conf.xsd">
-	<include location="component://common/webcommon/WEB-INF/common-controller.xml"/>
-	<description>Learning Module Site Configuration File</description>
-	
-	<handler name="service-multi" type="request" class="org.ofbiz.webapp.event.ServiceMultiEventHandler"/>
+	<include location="component://common/webcommon/WEB-INF/common-controller.xml" />
+	<description>Reports Module Site Configuration File</description>
+
+	<handler name="service-multi" type="request"
+		class="org.ofbiz.webapp.event.ServiceMultiEventHandler" />
 
 	<request-map uri="main">
 		<security https="true" auth="true" />
-		<response name="success" type="view" value="main" />
+		<response name="success" type="view" value="findReports" />
+	</request-map>
+
+	<request-map uri="FindReports">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="findReports" />
 	</request-map>
 
 	<request-map uri="ReportSaft">
@@ -23,26 +29,32 @@
 		<response name="success" type="request-redirect" value="ReportSaftPending">
 			<redirect-parameter name="reportQueueId" from="reportQueueId" />
 		</response>
-		<response name="redirectToForm" type="request-redirect-noparam" value="ReportSaft" />
+		<response name="redirectToForm" type="request-redirect-noparam"
+			value="ReportSaft" />
 	</request-map>
-	
+
 	<request-map uri="ReportSaftPending">
 		<security https="true" auth="true" />
-		<response name="success" type="view" value="ReportSaftPending"/>
+		<response name="success" type="view" value="ReportSaftPending" />
 	</request-map>
 	
+	<request-map uri="ReportDetails">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="ReportSaftPending" />
+	</request-map>
+
 	<request-map uri="getReportStatusIdJson">
 		<security https="true" auth="true" />
 		<event type="service" invoke="getReportStatusDisplayForSaft" />
 		<response name="success" type="request" value="json" />
 		<response name="error" type="request" value="json" />
 	</request-map>
-	
+
 	<request-map uri="getReportResultDisplay">
 		<security https="true" auth="true" />
-		<response name="success" type="view" value="ReportResultDisplay"/>
+		<response name="success" type="view" value="ReportResultDisplay" />
 	</request-map>
-	
+
 	<request-map uri="DownloadReport">
 		<security https="true" auth="true" />
 		<event type="java" path="org.ofbiz.reports.ReportsEvents"
@@ -50,17 +62,24 @@
 		<response name="success" type="none" />
 		<response name="error" type="none" />
 	</request-map>
+	
+	<request-map uri="DeleteReport">
+		<security https="true" auth="true" />
+		<event type="simple" invoke="deleteReport" path="component://reports/script/org/ofbiz/reports/ReportsSimpleEvents.xml"/>
+		<response name="success" type="request-redirect-noparam" value="FindReports" />
+		<response name="error" type="view" value="reportDetails" />
+	</request-map>
 
 	<!-- View Mappings -->
-	<view-map name="main" type="screen"
-		page="component://reports/widget/reports/CommonScreens.xml#main" />
+	<view-map name="findReports" type="screen"
+		page="component://reports/widget/reports/ReportsScreens.xml#findReports" />
 
 	<view-map name="ReportSaft" type="screen"
 		page="component://reports/widget/reports/ReportsScreens.xml#ReportSaft" />
 
 	<view-map name="ReportSaftPending" type="screen"
 		page="component://reports/widget/reports/ReportsScreens.xml#ReportSaftPending" />
-		
+
 	<view-map name="ReportResultDisplay" type="screen"
 		page="component://reports/widget/reports/ReportsScreens.xml#ReportResultDisplay" />
 	<!-- end of view mappings -->

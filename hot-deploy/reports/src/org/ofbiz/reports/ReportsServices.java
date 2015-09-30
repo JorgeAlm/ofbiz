@@ -9,18 +9,27 @@ import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
+import javolution.util.FastList;
 import javolution.util.FastMap;
 
 import org.ofbiz.base.util.Debug;
+import org.ofbiz.base.util.UtilGenerics;
 import org.ofbiz.base.util.UtilMisc;
 import org.ofbiz.base.util.UtilProperties;
 import org.ofbiz.base.util.UtilValidate;
 import org.ofbiz.entity.Delegator;
 import org.ofbiz.entity.GenericEntityException;
 import org.ofbiz.entity.GenericValue;
+import org.ofbiz.entity.condition.EntityCondition;
+import org.ofbiz.entity.condition.EntityFunction;
+import org.ofbiz.entity.condition.EntityOperator;
+import org.ofbiz.entity.model.DynamicViewEntity;
+import org.ofbiz.entity.model.ModelKeyMap;
 import org.ofbiz.entity.serialize.SerializeException;
 import org.ofbiz.entity.serialize.XmlSerializer;
 import org.ofbiz.entity.transaction.TransactionUtil;
+import org.ofbiz.entity.util.EntityFindOptions;
+import org.ofbiz.entity.util.EntityListIterator;
 import org.ofbiz.reports.ReportResult;
 import org.ofbiz.service.DispatchContext;
 import org.ofbiz.service.GenericServiceException;
@@ -147,6 +156,157 @@ public class ReportsServices {
 			return result;
 		}
 	}
+	
+	public static Map<String, Object> findReports(DispatchContext dctx, Map<String, ? extends Object> context) {
+        Map<String, Object> result = ServiceUtil.returnSuccess();
+        Delegator delegator = dctx.getDelegator();
+        GenericValue userLogin = (GenericValue) context.get("userLogin");
+        Locale locale = (Locale) context.get("locale");
+        String resource = "ReportsUiLabels";
+
+        // get the report types
+        try {
+            List<GenericValue> reportTypes = delegator.findList("ReportType", null, null, UtilMisc.toList("description"), null, false);
+            result.put("reportTypes", reportTypes);
+        } catch (GenericEntityException e) {
+            String errMsg = "Error looking up ReportTypes: " + e.toString();
+            Debug.logError(e, errMsg, module);
+            return ServiceUtil.returnError(UtilProperties.getMessage(resource,
+                    "RpoertsLookupReportTypeError",
+                    UtilMisc.toMap("errMessage", e.toString()), locale));
+        }
+
+        // current report type
+        String reportTypeId;
+        try {
+        	reportTypeId = (String) context.get("reportTypeId");
+            if (UtilValidate.isNotEmpty(reportTypeId)) {
+                GenericValue currentReportType = delegator.findOne("ReportType", UtilMisc.toMap("reportTypeId", reportTypeId), true);
+                result.put("currentReportType", currentReportType);
+            }
+        } catch (GenericEntityException e) {
+            String errMsg = "Error looking up current ReportType: " + e.toString();
+            Debug.logError(e, errMsg, module);
+            return ServiceUtil.returnError(UtilProperties.getMessage(resource,
+                    "ReportsLookupReportTypeError",
+                    UtilMisc.toMap("errMessage", e.toString()), locale));
+        }
+
+        // set the page parameters
+        int viewIndex = 0;
+        try {
+            viewIndex = Integer.parseInt((String) context.get("VIEW_INDEX"));
+        } catch (Exception e) {
+            viewIndex = 0;
+        }
+        result.put("viewIndex", Integer.valueOf(viewIndex));
+
+        int viewSize = 20;
+        try {
+            viewSize = Integer.parseInt((String) context.get("VIEW_SIZE"));
+        } catch (Exception e) {
+            viewSize = 20;
+        }
+        result.put("viewSize", Integer.valueOf(viewSize));
+
+        // blank param list
+        String paramList = "";
+
+        List<GenericValue> reportsList = null;
+        int reportsListSize = 0;
+        int lowIndex = 0;
+        int highIndex = 0;
+
+        String showAll = (context.get("showAll") != null ? (String) context.get("showAll") : "N");
+        paramList = paramList + "&showAll=" + showAll;
+
+        // create the dynamic view entity
+        DynamicViewEntity dynamicView = new DynamicViewEntity();
+
+        // default view settings
+        dynamicView.addMemberEntity("RP", "Report");
+        dynamicView.addAlias("RP", "reportId");
+        dynamicView.addAlias("RP", "reportTypeId");
+        dynamicView.addAlias("RP", "reportData");
+        dynamicView.addAlias("RP", "reportDataBin");
+        dynamicView.addAlias("RP", "createdTxStamp");
+        
+        dynamicView.addMemberEntity("RPT", "ReportType");
+        dynamicView.addAlias("RPT", "description");
+        dynamicView.addViewLink("RP", "RPT", Boolean.FALSE, ModelKeyMap.makeKeyMapList("reportTypeId", "reportTypeId"));
+        //dynamicView.addRelation("many", "", "UserLogin", ModelKeyMap.makeKeyMapList("partyId"));
+
+        // define the main condition & expression list
+        List<EntityCondition> andExprs = FastList.newInstance();
+        EntityCondition mainCond = null;
+
+        List<String> orderBy = FastList.newInstance();
+        List<String> fieldsToSelect = FastList.newInstance();
+        // fields we need to select; will be used to set distinct
+        fieldsToSelect.add("reportId");
+        fieldsToSelect.add("reportTypeId");
+        fieldsToSelect.add("reportData");
+        fieldsToSelect.add("reportDataBin");
+        fieldsToSelect.add("description");
+        fieldsToSelect.add("createdTxStamp");
+
+        // check for a partyId
+        if (UtilValidate.isNotEmpty(reportTypeId) && !reportTypeId.equals("ANY")) {
+            paramList = paramList + "&reportTypeId=" + reportTypeId;
+            andExprs.add(EntityCondition.makeCondition(EntityFunction.UPPER_FIELD("reportTypeId"), EntityOperator.LIKE, EntityFunction.UPPER("%"+reportTypeId+"%")));
+        }
+
+        // build the main condition
+        if (andExprs.size() > 0) mainCond = EntityCondition.makeCondition(andExprs, EntityOperator.AND);
+
+        Debug.logInfo("In findReports mainCond=" + mainCond, module);
+
+        String sortField = (String) context.get("sortField");
+        if(UtilValidate.isNotEmpty(sortField)){
+            orderBy.add(sortField);
+        } else {
+        	orderBy.add("createdTxStamp");
+        }
+        
+        // do the lookup
+        try {
+            // get the indexes for the partial list
+            lowIndex = viewIndex * viewSize + 1;
+            highIndex = (viewIndex + 1) * viewSize;
+
+            // set distinct on so we only get one row per order
+            EntityFindOptions findOpts = new EntityFindOptions(true, EntityFindOptions.TYPE_SCROLL_INSENSITIVE, EntityFindOptions.CONCUR_READ_ONLY, -1, highIndex, false);
+            // using list iterator
+            EntityListIterator pli = delegator.findListIteratorByCondition(dynamicView, mainCond, null, fieldsToSelect, orderBy, findOpts);
+
+            // get the partial list for this page
+            reportsList = pli.getPartialList(lowIndex, viewSize);
+
+            // attempt to get the full size
+            reportsListSize = pli.getResultsSizeAfterPartialList();
+            if (highIndex > reportsListSize) {
+                highIndex = reportsListSize;
+            }
+
+            // close the list iterator
+            pli.close();
+        } catch (GenericEntityException e) {
+            String errMsg = "Failure in report find operation, rolling back transaction: " + e.toString();
+            Debug.logError(e, errMsg, module);
+            return ServiceUtil.returnError(UtilProperties.getMessage(resource,
+                    "ReportLookupPartyError",
+                    UtilMisc.toMap("errMessage", e.toString()), locale));
+        }
+
+        if (reportsList == null) reportsList = FastList.newInstance();
+        result.put("reportsList", reportsList);
+        result.put("reportsListSize", Integer.valueOf(reportsListSize));
+        result.put("paramList", paramList);
+        result.put("highIndex", Integer.valueOf(highIndex));
+        result.put("lowIndex", Integer.valueOf(lowIndex));
+
+        return result;
+    }
 	
 	private static void persistJobResult(Delegator delegator, GenericValue reportQueue, Map<String, Object> result) throws SerializeException, FileNotFoundException, IOException, GenericEntityException{
 		String reportId = delegator.getNextSeqId("Report");

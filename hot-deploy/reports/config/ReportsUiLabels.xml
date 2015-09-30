@@ -59,6 +59,10 @@
     <property key="ReportSaftPtMenuTitle">
     	<value xml:lang="en">SAFT-PT</value>
     </property>
+    <property key="FindReportsMenuTitle">
+    	<value xml:lang="en">Find Report(s)</value>
+    	<value xml:lang="pt">Procurar Relatórios</value>
+    </property>
     <!-- Reports Screens -->
     <property key="ReportQueueId">
     	<value xml:lang="en">Process identifier</value>
@@ -72,7 +76,7 @@
     	<value xml:lang="en">Process status</value>
 		<value xml:lang="pt">Estado do processo</value>
     </property>
-    <property key="SaftDownload">
+    <property key="ReportCommonDownload">
     	<value xml:lang="en">Download</value>
 		<value xml:lang="pt">Transferir</value>
     </property>
@@ -91,6 +95,62 @@
     <property key="SaftQueueFailedMessage">
     	<value xml:lang="en">An error occurred while trying to run the process. Please try again.</value>
 		<value xml:lang="pt">O processo foi interrompido com erro, pf. tente novamente mais tarde.</value>
+    </property>
+    <property key="PageTitleFindReports">
+    	<value xml:lang="en">Find Report(s)</value>
+    	<value xml:lang="pt">Procurar Relatórios</value>
+    </property>
+    <property key="PageTitleReportSaft">
+    	<value xml:lang="en">Saft Report creation</value>
+    	<value xml:lang="pt">Criação de relatório SAFT</value>
+    </property>
+    <property key="PageTitleReportSaftDetails">
+    	<value xml:lang="en">Report details</value>
+    	<value xml:lang="pt">Detalhes do relatório</value>
+    </property>
+    <property key="CommonAnyReportType">
+    	<value xml:lang="en">Any</value>
+    	<value xml:lang="pt">Qualquer</value>
+    </property>
+    <property key="ReportType">
+    	<value xml:lang="en">Report type</value>
+    	<value xml:lang="pt">Tipo de relatório</value>
+    </property>
+    <property key="ReportTable_reportId">
+    	<value xml:lang="en">Report Id</value>
+    	<value xml:lang="pt">Identificador</value>
+    </property>
+    <property key="ReportTable_reportTypeDescription">
+    	<value xml:lang="en">Report type</value>
+    	<value xml:lang="pt">Tipo de relatório</value>
+    </property>
+    <property key="ReportTable_createdTxStamp">
+    	<value xml:lang="en">Creation date</value>
+    	<value xml:lang="pt">Data de criação</value>
+    </property>
+    <property key="ReportTable_actions">
+    	<value xml:lang="en">Actions</value>
+    	<value xml:lang="pt">Ações</value>
+    </property>
+    <property key="ReportDetails">
+    	<value xml:lang="en">Details</value>
+    	<value xml:lang="pt">Detalhes</value>
+    </property>
+    <property key="ReportDelete">
+    	<value xml:lang="en">Delete</value>
+    	<value xml:lang="pt">Apagar</value>
+    </property>
+    <property key="ReportNotFoundErrorMessage">
+    	<value xml:lang="en">The report was not found.</value>
+    	<value xml:lang="pt">Não foi possível encontrar um relatório.</value>
+    </property>
+    <property key="ReportNotFoundErrorMessage">
+    	<value xml:lang="en">The report was not found.</value>
+    	<value xml:lang="pt">Não foi possível encontrar um relatório.</value>
+    </property>
+    <property key="ReportDeletedSuccess">
+    	<value xml:lang="en">The report was successfully deleted.</value>
+    	<value xml:lang="pt">O relatório foi eliminado com sucesso.</value>
     </property>
     <!-- Service Messages -->
 	<property key="SaftUnableToFindTimePeriod">

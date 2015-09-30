@@ -7,7 +7,7 @@
 	</context-param>
 	<context-param>
 		<param-name>localDispatcherName</param-name>
-		<param-value>learning</param-value>
+		<param-value>reports</param-value>
 	</context-param>
 	<context-param>
         <param-name>mainDecoratorLocation</param-name>

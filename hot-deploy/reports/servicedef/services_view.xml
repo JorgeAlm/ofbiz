@@ -1,0 +1,30 @@
+<services xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/services.xsd">
+    <description>Reports Component View Services</description>
+    <vendor>JAlmeida</vendor>
+    <version>1.0</version>
+	
+	<!-- Party view services -->
+    <service name="findReports" engine="java"
+        location="org.ofbiz.reports.ReportsServices" invoke="findReports">
+        <description>General Reports Find Service, Used in the findReports page in the Reports module.</description>
+        <attribute name="lookupFlag" type="String" mode="IN" optional="true"/>
+        <attribute name="showAll" type="String" mode="IN" optional="true"/>
+        <attribute name="VIEW_INDEX" type="String" mode="IN" optional="true"/>
+        <attribute name="VIEW_SIZE" type="String" mode="IN" optional="true"/>
+        <attribute name="reportTypeId" type="String" mode="IN" optional="true"/>
+        <attribute name="sortField" type="String" mode="IN" optional="true"/>
+        
+        <attribute name="reportTypes" type="List" mode="OUT" optional="false"/>
+        <attribute name="currentReportType" type="org.ofbiz.entity.GenericValue" mode="OUT" optional="true"/>
+
+        <attribute name="viewIndex" type="Integer" mode="OUT" optional="false"/>
+        <attribute name="viewSize" type="Integer" mode="OUT" optional="false"/>
+        <attribute name="reportsList" type="List" mode="OUT" optional="false"/>
+        <attribute name="reportsListSize" type="Integer" mode="OUT" optional="false"/>
+        <attribute name="paramList" type="String" mode="OUT" optional="false"/>
+        <attribute name="highIndex" type="Integer" mode="OUT" optional="false"/>
+        <attribute name="lowIndex" type="Integer" mode="OUT" optional="false"/>
+        <attribute name="sortField" type="String" mode="OUT" optional="true"/>
+    </service>
+</services>

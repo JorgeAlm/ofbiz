@@ -5,13 +5,27 @@ import org.ofbiz.entity.condition.*;
 import org.ofbiz.base.util.*;
 import org.ofbiz.base.util.UtilMisc;
 
-context.reportQueue = delegator.findOne("ReportQueue", false, UtilMisc.toMap("reportQueueId", parameters.reportQueueId));
-context.reports = context.reportQueue.getRelated("Report", null, null, false);
-
 context.report = null;
 context.reportValidationMessages = null;
+context.reportQueue = null;
 
-if(context.reports != null && context.reports.size() > 0){
-	context.report = context.reports.get(0);
+if (parameters.reportQueueId != null){
+	context.reportQueue = delegator.findOne("ReportQueue", false, UtilMisc.toMap("reportQueueId", parameters.reportQueueId));
+	reports = context.reportQueue.getRelated("Report", null, null, false);
+	
+	if(reports != null && reports.size() > 0){
+		context.report = reports.get(0);
+	}
+	
+} else {
+	context.report = delegator.findOne("Report", false, UtilMisc.toMap("reportId", parameters.reportId));
+	reportQueues = context.report.getRelated("ReportQueue", null, null, false);
+	
+	if(reportQueues != null && reportQueues.size() > 0){
+		context.reportQueue = reportQueues.get(0);
+	}
+}
+
+if(context.report != null){
 	context.reportValidationMessages = context.report.getRelated("ReportValidationMsgs", null, null, false);
 }

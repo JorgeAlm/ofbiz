@@ -2,10 +2,36 @@
 <screens xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="http://www.ofbiz.org/dtds/widget-screen.xsd">
 
+	<screen name="findReports">
+		<section>
+			<actions>
+                <set field="titleProperty" value="PageTitleFindReports"/>
+                <set field="headerItem" value="findReports"/>
+
+                <service service-name="findReports" auto-field-map="parameters"/>
+            </actions>
+			<widgets>
+				<decorator-screen name="main-decorator"
+					location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<section>
+							<widgets>
+		                        <platform-specific>
+		                            <html><html-template location="component://reports/webapp/reports/reports/findReports.ftl"/></html>
+		                        </platform-specific>
+		                    </widgets>
+	                    </section>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
 	<screen name="ReportSaft">
 		<section>
 			<actions>
-				<set field="headerItem" value="reportsaft"/>
+				<set field="titleProperty" value="PageTitleReportSaft"/>
+				<set field="headerItem" value="reportsaft" />
 			</actions>
 			<widgets>
 				<decorator-screen name="main-decorator"
@@ -25,7 +51,8 @@
 				<set field="layoutSettings.javaScripts[]" value="/reports/js/ReportsQueueStatus.js"
 					global="true" />
 				<set field="isAjaxRequest" type="Boolean" value="false" global="true" />
-				<set field="headerItem" value="reportsaft"/>
+				<set field="titleProperty" value="PageTitleReportSaftDetails"/>
+				<set field="headerItem" value="reportsaft" />
 			</actions>
 			<widgets>
 				<decorator-screen name="main-decorator"
@@ -46,7 +73,8 @@
 				</container>
 				<container>
 					<label text="${uiLabelMap.ReportQueueStatus}: " />
-					<label text="${groovy:uiLabelMap['ReportQueueStatus_' + reportQueue.reportQueueStatusId]}"
+					<label
+						text="${groovy:uiLabelMap['ReportQueueStatus_' + reportQueue.reportQueueStatusId]}"
 						id="StatusPlaceHolder" />
 				</container>
 			</widgets>
@@ -71,8 +99,9 @@
 	<screen name="ReportResultDisplayInternal">
 		<section>
 			<actions>
-				<!-- Expects the existence of a request parameter named "reportQueueId" -->
-				<script location="component://reports/webapp/reports/WEB-INF/actions/ReportResultDisplayInternal.groovy"/>
+				<!-- Expects the existence of a request parameter named "reportQueueId" or "reportId" -->
+				<script
+					location="component://reports/webapp/reports/WEB-INF/actions/ReportResultDisplayInternal.groovy" />
 			</actions>
 			<widgets>
 				<section>
@@ -85,12 +114,12 @@
 						<section>
 							<condition>
 								<or>
-									<if-compare field="reportQueue.reportQueueStatusId" operator="equals"
-										value="RUNNING" />
-									<if-compare field="reportQueue.reportQueueStatusId" operator="equals"
-										value="PENDING" />
-									<if-compare field="reportQueue.reportQueueStatusId" operator="equals"
-										value="QUEUED" />
+									<if-compare field="reportQueue.reportQueueStatusId"
+										operator="equals" value="RUNNING" />
+									<if-compare field="reportQueue.reportQueueStatusId"
+										operator="equals" value="PENDING" />
+									<if-compare field="reportQueue.reportQueueStatusId"
+										operator="equals" value="QUEUED" />
 								</or>
 							</condition>
 							<widgets>
@@ -116,8 +145,8 @@
 							<fail-widgets>
 								<section>
 									<condition>
-										<if-compare field="reportQueue.reportQueueStatusId" operator="equals"
-											value="CANCELLED" />
+										<if-compare field="reportQueue.reportQueueStatusId"
+											operator="equals" value="CANCELLED" />
 									</condition>
 									<widgets>
 										<section>
@@ -139,10 +168,10 @@
 										<section>
 											<condition>
 												<or>
-													<if-compare field="reportQueue.reportQueueStatusId" operator="equals"
-														value="CRASHED" />
-													<if-compare field="reportQueue.reportQueueStatusId" operator="equals"
-														value="FAILED" />
+													<if-compare field="reportQueue.reportQueueStatusId"
+														operator="equals" value="CRASHED" />
+													<if-compare field="reportQueue.reportQueueStatusId"
+														operator="equals" value="FAILED" />
 												</or>
 											</condition>
 											<widgets>
@@ -177,7 +206,7 @@
 													</widgets>
 												</section>
 												<container id="ReportResultPlaceHolder">
-													<link target="DownloadReport" text="${uiLabelMap.SaftDownload}"
+													<link target="DownloadReport" text="${uiLabelMap.ReportCommonDownload}"
 														style="buttontext">
 														<parameter param-name="reportId" from-field="report.reportId" />
 													</link>

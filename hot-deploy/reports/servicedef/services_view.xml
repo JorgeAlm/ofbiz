@@ -13,6 +13,7 @@
         <attribute name="VIEW_INDEX" type="String" mode="IN" optional="true"/>
         <attribute name="VIEW_SIZE" type="String" mode="IN" optional="true"/>
         <attribute name="reportTypeId" type="String" mode="IN" optional="true"/>
+        <attribute name="reportName" type="String" mode="IN" optional="true"/>
         <attribute name="sortField" type="String" mode="IN" optional="true"/>
         
         <attribute name="reportTypes" type="List" mode="OUT" optional="false"/>

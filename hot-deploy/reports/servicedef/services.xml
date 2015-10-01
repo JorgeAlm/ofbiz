@@ -33,7 +33,6 @@ under the License.
     <service name="generateSaft" engine="java" auth="true"
             location="org.ofbiz.reports.ReportsServices" invoke="generateSaft">
         <description>Generates the SAFT report</description>
-        <!-- <permission-service service-name="partyBasePermissionCheck" main-action="CREATE"/> -->
         <attribute name="timePeriod" mode="IN" type="String" optional="false" />
         <attribute name="taxAuthGeoId" mode="IN" type="String"/>
 		<attribute name="postalAddressPurposeTypeId" mode="IN" type="String"/>

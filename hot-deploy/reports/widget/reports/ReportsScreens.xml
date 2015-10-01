@@ -67,10 +67,31 @@
 
 	<screen name="ReportQueueDetailsDisplay">
 		<section>
+			<actions>
+				<get-related-one relation-name="ReportType" to-value-field="reportType" value-field="reportQueue"/>
+			</actions>
 			<widgets>
 				<container>
 					<label text="${uiLabelMap.ReportQueueId}: ${reportQueue.reportQueueId}" />
 				</container>
+				<container>
+					<label text="${uiLabelMap.ReportType}: ${reportType.description}" />
+				</container>
+				<container>
+					<label text="${uiLabelMap.ReportQueuedDate}: ${reportQueue.createdTxStamp}" />
+				</container>
+				<section>
+					<condition>
+						<not>
+							<if-empty field="reportQueue.reportId"/>
+						</not>
+					</condition>
+					<widgets>
+						<container>
+							<label text="${uiLabelMap.ReportCreatedDate}: ${report.createdTxStamp}"/>
+						</container>
+					</widgets>
+				</section>
 				<container>
 					<label text="${uiLabelMap.ReportQueueStatus}: " />
 					<label
@@ -207,6 +228,10 @@
 												</section>
 												<container id="ReportResultPlaceHolder">
 													<link target="DownloadReport" text="${uiLabelMap.ReportCommonDownload}"
+														style="buttontext">
+														<parameter param-name="reportId" from-field="report.reportId" />
+													</link>
+													<link target="DeleteReport" text="${uiLabelMap.ReportCommonDelete}"
 														style="buttontext">
 														<parameter param-name="reportId" from-field="report.reportId" />
 													</link>

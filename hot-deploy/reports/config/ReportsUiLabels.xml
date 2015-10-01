@@ -116,9 +116,29 @@
     	<value xml:lang="en">Report type</value>
     	<value xml:lang="pt">Tipo de relatório</value>
     </property>
+    <property key="ReportName">
+    	<value xml:lang="en">Report name</value>
+    	<value xml:lang="pt">Nome do relatório</value>
+    </property>
+    <property key="ReportQueuedDate">
+    	<value xml:lang="en">Report queued date</value>
+    	<value xml:lang="pt">Data de início do processo</value>
+    </property>
+    <property key="ReportCreatedDate">
+    	<value xml:lang="en">Report creation date</value>
+    	<value xml:lang="pt">Data de criação do relatório</value>
+    </property>
+    <property key="ReportsNoReportsFound">
+    	<value xml:lang="en">No reports were found.</value>
+    	<value xml:lang="pt">Não foram encontrados relatórios.</value>
+    </property>
     <property key="ReportTable_reportId">
     	<value xml:lang="en">Report Id</value>
     	<value xml:lang="pt">Identificador</value>
+    </property>
+    <property key="ReportTable_reportName">
+    	<value xml:lang="en">Report name</value>
+    	<value xml:lang="pt">Nome</value>
     </property>
     <property key="ReportTable_reportTypeDescription">
     	<value xml:lang="en">Report type</value>
@@ -136,7 +156,7 @@
     	<value xml:lang="en">Details</value>
     	<value xml:lang="pt">Detalhes</value>
     </property>
-    <property key="ReportDelete">
+    <property key="ReportCommonDelete">
     	<value xml:lang="en">Delete</value>
     	<value xml:lang="pt">Apagar</value>
     </property>

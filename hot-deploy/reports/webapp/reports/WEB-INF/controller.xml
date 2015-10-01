@@ -14,6 +14,8 @@
 
 	<request-map uri="FindReports">
 		<security https="true" auth="true" />
+		<event type="java" path="org.ofbiz.reports.ReportsEvents"
+			invoke="feedbackSetter" />
 		<response name="success" type="view" value="findReports" />
 	</request-map>
 
@@ -66,7 +68,9 @@
 	<request-map uri="DeleteReport">
 		<security https="true" auth="true" />
 		<event type="simple" invoke="deleteReport" path="component://reports/script/org/ofbiz/reports/ReportsSimpleEvents.xml"/>
-		<response name="success" type="request-redirect-noparam" value="FindReports" />
+		<response name="success" type="request-redirect" value="FindReports">
+			<redirect-parameter name="feedback" value="ReportDeletedSuccess"/>
+		</response>
 		<response name="error" type="view" value="reportDetails" />
 	</request-map>
 

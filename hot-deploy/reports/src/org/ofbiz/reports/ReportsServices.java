@@ -46,6 +46,8 @@ public class ReportsServices {
 		Delegator delegator = ctx.getDelegator();
 		LocalDispatcher dispatcher = ctx.getDispatcher();
 		String reportQueueId = context.get("reportQueueId").toString();
+		GenericValue userLogin = (GenericValue)context.get("userLogin");
+		String reportName = null;
 		
 		GenericValue reportQueue = delegator.findOne("ReportQueue", false, UtilMisc.toMap("reportQueueId", reportQueueId));
 		
@@ -60,8 +62,13 @@ public class ReportsServices {
 				mapIn = (Map<String, Object>) XmlSerializer.deserialize(parameters, delegator);
 			}
 			
+			if(mapIn.containsKey("name")){
+				reportName = mapIn.get("name").toString();
+				mapIn.remove("name");
+			}
+			
 			mapIn.put("locale", context.get("locale"));
-	        mapIn.put("userLogin", context.get("userLogin"));
+	        mapIn.put("userLogin", userLogin);
 	        mapIn.put("timeZone", context.get("timeZone"));
 			
 			if(reportType.compareTo("SAFTPT") == 0){
@@ -74,11 +81,11 @@ public class ReportsServices {
 					
 					if(result != null){	
 						if(result.containsKey("saftContent")) {
-							persistJobResult(delegator, reportQueue, result);
+							persistJobResult(delegator, reportName, userLogin, reportQueue, result);
 							reportQueue.set("reportQueueStatusId", "FINISHED");
 							delegator.store(reportQueue);
 						} else {
-							persistJobResult(delegator, reportQueue, result);
+							persistJobResult(delegator, reportName, userLogin, reportQueue, result);
 							reportQueue.set("reportQueueStatusId", "FAILED");
 							delegator.store(reportQueue);
 						}
@@ -177,19 +184,27 @@ public class ReportsServices {
         }
 
         // current report type
-        String reportTypeId;
-        try {
-        	reportTypeId = (String) context.get("reportTypeId");
-            if (UtilValidate.isNotEmpty(reportTypeId)) {
-                GenericValue currentReportType = delegator.findOne("ReportType", UtilMisc.toMap("reportTypeId", reportTypeId), true);
-                result.put("currentReportType", currentReportType);
-            }
-        } catch (GenericEntityException e) {
-            String errMsg = "Error looking up current ReportType: " + e.toString();
-            Debug.logError(e, errMsg, module);
-            return ServiceUtil.returnError(UtilProperties.getMessage(resource,
-                    "ReportsLookupReportTypeError",
-                    UtilMisc.toMap("errMessage", e.toString()), locale));
+        String reportTypeId = null;
+        if(context.containsKey("reportTypeId")){
+	        try {
+	        	reportTypeId = (String) context.get("reportTypeId");
+	            if (UtilValidate.isNotEmpty(reportTypeId)) {
+	                GenericValue currentReportType = delegator.findOne("ReportType", UtilMisc.toMap("reportTypeId", reportTypeId), true);
+	                result.put("currentReportType", currentReportType);
+	            }
+	        } catch (GenericEntityException e) {
+	            String errMsg = "Error looking up current ReportType: " + e.toString();
+	            Debug.logError(e, errMsg, module);
+	            return ServiceUtil.returnError(UtilProperties.getMessage(resource,
+	                    "ReportsLookupReportTypeError",
+	                    UtilMisc.toMap("errMessage", e.toString()), locale));
+	        }
+        }
+        
+        // report name
+        String reportName = null;
+        if(context.containsKey("reportName")){
+        	reportName = (String) context.get("reportName");
         }
 
         // set the page parameters
@@ -227,9 +242,11 @@ public class ReportsServices {
         dynamicView.addMemberEntity("RP", "Report");
         dynamicView.addAlias("RP", "reportId");
         dynamicView.addAlias("RP", "reportTypeId");
+        dynamicView.addAlias("RP", "reportName");
         dynamicView.addAlias("RP", "reportData");
         dynamicView.addAlias("RP", "reportDataBin");
         dynamicView.addAlias("RP", "createdTxStamp");
+        dynamicView.addAlias("RP", "createdByUserLogin");
         
         dynamicView.addMemberEntity("RPT", "ReportType");
         dynamicView.addAlias("RPT", "description");
@@ -245,16 +262,27 @@ public class ReportsServices {
         // fields we need to select; will be used to set distinct
         fieldsToSelect.add("reportId");
         fieldsToSelect.add("reportTypeId");
+        fieldsToSelect.add("reportName");
         fieldsToSelect.add("reportData");
         fieldsToSelect.add("reportDataBin");
         fieldsToSelect.add("description");
         fieldsToSelect.add("createdTxStamp");
+        fieldsToSelect.add("createdByUserLogin");
 
-        // check for a partyId
+        // check for a reportTypeId
         if (UtilValidate.isNotEmpty(reportTypeId) && !reportTypeId.equals("ANY")) {
             paramList = paramList + "&reportTypeId=" + reportTypeId;
-            andExprs.add(EntityCondition.makeCondition(EntityFunction.UPPER_FIELD("reportTypeId"), EntityOperator.LIKE, EntityFunction.UPPER("%"+reportTypeId+"%")));
+            andExprs.add(EntityCondition.makeCondition("reportTypeId", EntityOperator.EQUALS, reportTypeId));
         }
+        
+        // check for reportName
+        if (UtilValidate.isNotEmpty(reportName)){
+        	paramList = paramList + "&reportName=" + reportName;
+        	andExprs.add(EntityCondition.makeCondition(EntityFunction.UPPER_FIELD("reportName"), EntityOperator.LIKE, EntityFunction.UPPER("%"+reportName+"%")));
+        }
+        
+        // filter userLogin
+        andExprs.add(EntityCondition.makeCondition("createdByUserLogin", EntityOperator.EQUALS, userLogin.getString("userLoginId")));
 
         // build the main condition
         if (andExprs.size() > 0) mainCond = EntityCondition.makeCondition(andExprs, EntityOperator.AND);
@@ -308,11 +336,15 @@ public class ReportsServices {
         return result;
     }
 	
-	private static void persistJobResult(Delegator delegator, GenericValue reportQueue, Map<String, Object> result) throws SerializeException, FileNotFoundException, IOException, GenericEntityException{
+	private static void persistJobResult(Delegator delegator, String reportName, GenericValue userLogin, GenericValue reportQueue, Map<String, Object> result) throws SerializeException, FileNotFoundException, IOException, GenericEntityException{
 		String reportId = delegator.getNextSeqId("Report");
 		GenericValue report = delegator.makeValue("Report");
 		report.set("reportId", reportId);
 		report.set("reportTypeId", reportQueue.getString("reportTypeId"));
+		if(UtilValidate.isNotEmpty(reportName)){
+			report.set("reportName", reportName);
+		}
+		report.set("createdByUserLogin", userLogin.getString("userLoginId"));
 		
 		if(result.containsKey("saftContent")){
 			report.set("reportData", result.get("saftContent").toString());

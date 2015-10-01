@@ -12,7 +12,6 @@
     			<remove-related relation-name="ReportValidationMsgs" value-field="report"/>
     			<remove-related relation-name="ReportQueue" value-field="report" />
     			<remove-value value-field="report"/>
-    			<set field="_event_message_" value="${uiLabelMap.ReportDeletedSuccess}"/>
     		</else>
     	</if-empty>
     </simple-method>

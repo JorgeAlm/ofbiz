@@ -46,6 +46,10 @@
 						</td>
 					</tr>
 					<tr>
+						<td class="label">${uiLabelMap.ReportName}</td>
+						<td><input type="text" name="reportName", value="${parameters.reportName?if_exists}" /></td>
+					</tr>
+					<tr>
             			<td>&nbsp;</td>
             			<td>
               				<input type="submit" value="${uiLabelMap.CommonFind}" onclick="javascript:document.lookupparty.submit();"/>
@@ -86,12 +90,16 @@
 						</a>
 					</td>
 					<td>
+						<a href="<@ofbizUrl>FindReports</@ofbizUrl>?<#if sortField?has_content><#if sortField == "reportName">sortField=-reportName<#elseif sortField == "-reportName">sortField=reportName<#else>sortField=reportName</#if><#else>sortField=reportName</#if>${paramList?if_exists}&VIEW_SIZE=${viewSize?if_exists}&VIEW_INDEX=${viewIndex?if_exists}" 
+							<#if sortField?has_content><#if sortField == "reportName">class="sort-order-desc"<#elseif sortField == "-reportName">class="sort-order-asc"<#else>class="sort-order"</#if><#else>class="sort-order"</#if>>${uiLabelMap.ReportTable_reportName}
+						</a>
+					</td>
+					<td>
 						<a href="<@ofbizUrl>FindReports</@ofbizUrl>?<#if sortField?has_content><#if sortField == "createdTxStamp">sortField=-createdTxStamp<#elseif sortField == "-createdTxStamp">sortField=createdTxStamp<#else>sortField=createdTxStamp</#if><#else>sortField=createdTxStamp</#if>${paramList?if_exists}&VIEW_SIZE=${viewSize?if_exists}&VIEW_INDEX=${viewIndex?if_exists}" 
 							<#if sortField?has_content><#if sortField == "createdTxStamp">class="sort-order-desc"<#elseif sortField == "-createdTxStamp">class="sort-order-asc"<#else>class="sort-order"</#if><#else>class="sort-order"</#if>>${uiLabelMap.ReportTable_createdTxStamp}
 						</a>
 					</td>
 					<td>${uiLabelMap.ReportTable_actions}</td>
-					<td>&nbsp;</td>
 				</tr>
 				<#assign alt_row = false>
 				<#assign rowCount = 0>
@@ -101,10 +109,11 @@
 					<tr valign="middle"<#if alt_row> class="alternate-row"</#if>>
 						<td><a href="<@ofbizUrl>ReportDetails?reportId=${reportRow.reportId}</@ofbizUrl>">${reportRow.reportId}</a></td>
 						<td>${reportRow.description}</td>
+						<td><#if reportRow.reportName?has_content>${reportRow.reportName}</#if></td>
 						<td>${reportRow.createdTxStamp}</td>
 						<td class="button-col align-float">
 							<a href="/reports/control/ReportDetails?reportId=${reportRow.reportId}">${uiLabelMap.ReportDetails}</a>
-							<a href="/reports/control/DeleteReport?reportId=${reportRow.reportId}">${uiLabelMap.ReportDelete}</a>
+							<a href="/reports/control/DeleteReport?reportId=${reportRow.reportId}">${uiLabelMap.ReportCommonDelete}</a>
 							<#if reportHasData>
 								<a href="/reports/control/DownloadReport?reportId=${reportRow.reportId}">${uiLabelMap.ReportCommonDownload}</a>
 							</#if>

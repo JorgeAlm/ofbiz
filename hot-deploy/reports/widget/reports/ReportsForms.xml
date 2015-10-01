@@ -10,6 +10,9 @@
 				</entity-options>
 			</drop-down>
 		</field>
+		<field name="name" title="${uiLabelMap.ReportName}">
+			<text />
+		</field>
 		<field name="taxAuthGeoId" title="${uiLabelMap.SaftTaxAuthGeoIdTitle}">
 			<drop-down allow-empty="true" allow-multiple="false">
 				<entity-options entity-name="Geo" key-field-name="geoId" description="${geoName}" filter-by-date="false">

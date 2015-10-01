@@ -21,6 +21,7 @@ import org.ofbiz.base.util.GeneralException;
 import org.ofbiz.base.util.UtilDateTime;
 import org.ofbiz.base.util.UtilHttp;
 import org.ofbiz.base.util.UtilMisc;
+import org.ofbiz.base.util.UtilProperties;
 import org.ofbiz.base.util.UtilValidate;
 import org.ofbiz.entity.Delegator;
 import org.ofbiz.entity.GenericValue;
@@ -29,6 +30,18 @@ import org.ofbiz.service.LocalDispatcher;
 
 public class ReportsEvents {
 	public static final String module = ReportsEvents.class.getName();
+	
+	public static String feedbackSetter(HttpServletRequest request,
+			HttpServletResponse response) {
+		
+		Locale locale = UtilHttp.getLocale(request);
+		Object feedback = request.getParameter("feedback");
+		if(UtilValidate.isNotEmpty(feedback)){
+			request.setAttribute("_EVENT_MESSAGE_", UtilProperties.getMessage("ReportsUiLabels", feedback.toString(), locale));
+		}
+		
+		return "success";
+	}
 
 	public static String queueSaftPtReport(HttpServletRequest request,
 			HttpServletResponse response) throws ParserConfigurationException,
@@ -47,6 +60,7 @@ public class ReportsEvents {
 		}
         
 		String customTimePeriodId = customTimePeriodIdParameter.toString();
+		String reportName = request.getParameter("name").toString();
 		String taxAuthGeoId = request.getParameter("taxAuthGeoId").toString();
 		String postalAddressPurposeTypeId = request.getParameter("postalAddressPurposeTypeId").toString();
 		String phonePurposeTypeId = request.getParameter("phonePurposeTypeId").toString();
@@ -56,6 +70,7 @@ public class ReportsEvents {
 
 		Map<String, Object> mapIn = FastMap.newInstance();
 		mapIn.put("timePeriod", customTimePeriodId);
+		mapIn.put("name", reportName);
 		mapIn.put("taxAuthGeoId", taxAuthGeoId);
 		mapIn.put("postalAddressPurposeTypeId", postalAddressPurposeTypeId);
 		mapIn.put("phonePurposeTypeId", phonePurposeTypeId);

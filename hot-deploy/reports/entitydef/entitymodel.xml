@@ -11,6 +11,8 @@
 	<entity entity-name="Report" package-name="org.ofbiz.reports" title="Report entity">
 		<field name="reportId" type="id-ne" />
 		<field name="reportTypeId" type="id-ne" />
+		<field name="reportName" type="id-ne" />
+		<field name="createdByUserLogin" type="id-ne" />
 		<field name="reportData" type="very-long" />
 		<field name="reportDataBin" type="blob" />
 		<prim-key field="reportId"/>

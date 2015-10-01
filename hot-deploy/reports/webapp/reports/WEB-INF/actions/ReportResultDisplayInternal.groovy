@@ -11,18 +11,24 @@ context.reportQueue = null;
 
 if (parameters.reportQueueId != null){
 	context.reportQueue = delegator.findOne("ReportQueue", false, UtilMisc.toMap("reportQueueId", parameters.reportQueueId));
-	reports = context.reportQueue.getRelated("Report", null, null, false);
-	
-	if(reports != null && reports.size() > 0){
-		context.report = reports.get(0);
+	if(context.reportQueue != null)
+	{
+		reports = context.reportQueue.getRelated("Report", null, null, false);
+		
+		if(reports != null && reports.size() > 0){
+			context.report = reports.get(0);
+		}
 	}
 	
 } else {
 	context.report = delegator.findOne("Report", false, UtilMisc.toMap("reportId", parameters.reportId));
-	reportQueues = context.report.getRelated("ReportQueue", null, null, false);
-	
-	if(reportQueues != null && reportQueues.size() > 0){
-		context.reportQueue = reportQueues.get(0);
+	if(context.report != null) 
+	{
+		reportQueues = context.report.getRelated("ReportQueue", null, null, false);
+		
+		if(reportQueues != null && reportQueues.size() > 0){
+			context.reportQueue = reportQueues.get(0);
+		}
 	}
 }
 

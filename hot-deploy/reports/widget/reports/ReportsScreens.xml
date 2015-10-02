@@ -2,7 +2,7 @@
 <screens xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="http://www.ofbiz.org/dtds/widget-screen.xsd">
 
-	<screen name="findReports">
+	<screen name="FindReports">
 		<section>
 			<actions>
                 <set field="titleProperty" value="PageTitleFindReports"/>
@@ -45,7 +45,7 @@
 		</section>
 	</screen>
 
-	<screen name="ReportSaftPending">
+	<screen name="ReportPending">
 		<section>
 			<actions>
 				<set field="layoutSettings.javaScripts[]" value="/reports/js/ReportsQueueStatus.js"
@@ -82,9 +82,22 @@
 				</container>
 				<section>
 					<condition>
-						<not>
-							<if-empty field="reportQueue.reportId"/>
-						</not>
+						<and>
+							<not>
+								<if-empty field="reportQueue.reportId"/>
+							</not>
+							<not>
+								<if-empty field="report"/>
+							</not>
+							<or>
+								<not>
+									<if-empty field="report.reportData"/>
+								</not>
+								<not>
+									<if-empty field="report.reportDataBin"/>
+								</not>
+							</or>
+						</and>
 					</condition>
 					<widgets>
 						<container>
@@ -182,7 +195,7 @@
 											</widgets>
 										</section>
 										<container>
-											<label text="${uiLabelMap.SaftQueueCancelledMessage}" />
+											<label text="${uiLabelMap.ReportQueueCancelledMessage}" />
 										</container>
 									</widgets>
 									<fail-widgets>
@@ -208,7 +221,7 @@
 													</widgets>
 												</section>
 												<container>
-													<label text="${uiLabelMap.SaftQueueFailedMessage}" />
+													<label text="${uiLabelMap.ReportQueueFailedMessage}" />
 													<section>
 														<widgets>
 															<include-screen name="ReportValidationMessages" />

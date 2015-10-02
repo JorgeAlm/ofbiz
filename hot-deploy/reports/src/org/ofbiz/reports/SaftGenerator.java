@@ -47,7 +47,6 @@ public class SaftGenerator {
 			String emailPurposeType, String websitePurposeType) throws ParserConfigurationException, GenericEntityException, TransformerException{
 		
 		ReportResult result = new ReportResult();
-		Map<String, String> messageParams = FastMap.newInstance();
 		
 		if(UtilValidate.isEmpty(taxAuthGeoId)){
 			taxAuthGeoId = "PRT";
@@ -88,6 +87,7 @@ public class SaftGenerator {
 		GenericValue customTimePeriod = delegator.findOne("CustomTimePeriod", timePeriodFilter, false);
 		
 		if(customTimePeriod == null){
+			Map<String, String> messageParams = FastMap.newInstance();
 			messageParams.put("customTimePeriodId", customTimePeriodId);
 			result.addMessage("SaftUnableToFindTimePeriod", messageParams, ReportMessageSeverity.Error);
 			return result;
@@ -101,14 +101,14 @@ public class SaftGenerator {
 		int comparisonValue = startDate.compareTo(endDate);
 		
 		if(comparisonValue == 0){
-			messageParams.clear();
+			Map<String, String> messageParams = FastMap.newInstance();
 			messageParams.put("customTimePeriodId", customTimePeriodId);
 			messageParams.put("startDate", startDate.toString());
 			messageParams.put("endDate", endDate.toString());
 			result.addMessage("SaftFiscalYearStartDateEqualsEndDate", messageParams, ReportMessageSeverity.Error);
 			return result;
 		} else if (comparisonValue > 0){
-			messageParams.clear();
+			Map<String, String> messageParams = FastMap.newInstance();
 			messageParams.put("customTimePeriodId", customTimePeriodId);
 			messageParams.put("startDate", startDate.toString());
 			messageParams.put("endDate", endDate.toString());
@@ -137,6 +137,7 @@ public class SaftGenerator {
 		TransformerFactory transfac = TransformerFactory.newInstance();
 		Transformer trans = transfac.newTransformer();
 		trans.setOutputProperty(OutputKeys.INDENT, "yes");
+		trans.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
 
 		// create string from xml tree
 		StringWriter sw = new StringWriter();
@@ -150,7 +151,6 @@ public class SaftGenerator {
 	
 	private static ReportResult getPartyTaxInfo(Delegator delegator, String partyId, Timestamp startDate, Timestamp endDate, String taxAuthGeoId) throws GenericEntityException{
 		ReportResult result = new ReportResult();
-		Map<String, String> messageParams = FastMap.newInstance();
 		
 		List<EntityExpr> partyFilterList = FastList.newInstance();
 		partyFilterList.add(EntityCondition.makeCondition("partyId", EntityOperator.EQUALS, partyId));
@@ -175,12 +175,12 @@ public class SaftGenerator {
 		List<GenericValue> orgInfoList = delegator.findList("ReportSaftOrgInfo", orgInfoFilters, null, null, null, false);
 		
 		if(orgInfoList == null || orgInfoList.isEmpty()){
-			messageParams.clear();
+			Map<String, String> messageParams = FastMap.newInstance();
 			messageParams.put("partyId", partyId);
 			messageParams.put("taxAuthGeoId", taxAuthGeoId);
 			result.addMessage("SaftPartyTaxInfoNotFound", messageParams, ReportMessageSeverity.Error);
 		} else if (orgInfoList.size() > 1){
-			messageParams.clear();
+			Map<String, String> messageParams = FastMap.newInstance();
 			messageParams.put("partyId", partyId);
 			messageParams.put("taxAuthGeoId", taxAuthGeoId);
 			result.addMessage("SaftMoreThanOnePartyTaxInfoFound", messageParams, ReportMessageSeverity.Error);
@@ -194,7 +194,6 @@ public class SaftGenerator {
 	
 	private static ReportResult getPartyAddress(Delegator delegator, String partyId, Timestamp startDate, Timestamp endDate, String postalAddressPurposeType, String countryGeoId) throws GenericEntityException {
 		ReportResult result = new ReportResult();
-		Map<String, String> messageParams = FastMap.newInstance();
 		
 		List<EntityCondition> filtersList = FastList.newInstance();
 		boolean hasUserFilter = false;
@@ -241,7 +240,7 @@ public class SaftGenerator {
 		List<GenericValue> postalAddressesList = delegator.findList("ReportSaftOrgPA", addressFilters, null, UtilMisc.toList("paLastUpdatedStamp DESC"), null, false);
 		
 		if(postalAddressesList.size() == 0 && hasUserFilter){
-			messageParams.clear();
+			Map<String, String> messageParams = FastMap.newInstance();
 			messageParams.put("partyId", partyId);
 			messageParams.put("postalAddressPurposeType", postalAddressPurposeType);
 			messageParams.put("countryGeoId", countryGeoId);
@@ -255,12 +254,12 @@ public class SaftGenerator {
 		}
 		
 		if(postalAddressesList == null || postalAddressesList.isEmpty()){
-			messageParams.clear();
+			Map<String, String> messageParams = FastMap.newInstance();
 			messageParams.put("partyId", partyId);
 			messageParams.put("countryGeoId", countryGeoId);
 			result.addMessage("SaftNoActivePostalAddressFound", messageParams, ReportMessageSeverity.Error);
 		} else if (postalAddressesList.size() > 1){
-			messageParams.clear();
+			Map<String, String> messageParams = FastMap.newInstance();
 			messageParams.put("partyId", partyId);
 			messageParams.put("countryGeoId", countryGeoId);
 			result.addMessage("SaftMoreThanOnePostalAddressFound", messageParams, ReportMessageSeverity.Warning);
@@ -275,7 +274,6 @@ public class SaftGenerator {
 	private static ReportResult getPartyTelecom(Delegator delegator, String partyId, Timestamp startDate, Timestamp endDate, String phonePurposeType, String faxPurposeType) throws GenericEntityException{
 		ReportResult result = new ReportResult();
 		Map<String, GenericValue> telecomResult = FastMap.newInstance();
-		Map<String, String> messageParams = FastMap.newInstance();
 		
 		EntityCondition partyFilter = EntityCondition.makeCondition("partyId", EntityOperator.EQUALS, partyId);
 		
@@ -302,15 +300,24 @@ public class SaftGenerator {
 		EntityCondition telecomFilters = EntityCondition.makeCondition(UtilMisc.toList(partyFilter, pcmBeginDateFilter, pcmEndDateFilter, pcmpBeginDateFilter, pcmpEndDateFilter), EntityOperator.AND);
 		
 		List<GenericValue> telecomContacts = delegator.findList("ReportSaftOrgTelecom", telecomFilters, null, UtilMisc.toList("contactMechPurposeTypeId ASC", "tnLastUpdatedStamp DESC"), null, false);
+		boolean hasDuplicatePhone = false;
+		boolean hasDuplicateFax = false;
 		
 		for (GenericValue contact: telecomContacts){
 			String contactPurposeType = contact.getString("contactMechPurposeTypeId");
 			
-			if((contactPurposeType.equals(phonePurposeType) && telecomResult.containsKey("phone")) || (contactPurposeType.equals(faxPurposeType) && telecomResult.containsKey("fax"))){
-				messageParams.clear();
+			if(contactPurposeType.equals(phonePurposeType) && telecomResult.containsKey("phone") && !hasDuplicatePhone){
+				Map<String, String> messageParams = FastMap.newInstance();
 				messageParams.put("partyId", partyId);
 				messageParams.put("contactPurposeType", contactPurposeType);
 				result.addMessage("SaftMoreThanOneContactMechanismFound", messageParams, ReportMessageSeverity.Warning);
+				hasDuplicatePhone = true;
+			} else if(contactPurposeType.equals(faxPurposeType) && telecomResult.containsKey("fax") && !hasDuplicateFax){
+				Map<String, String> messageParams = FastMap.newInstance();
+				messageParams.put("partyId", partyId);
+				messageParams.put("contactPurposeType", contactPurposeType);
+				result.addMessage("SaftMoreThanOneContactMechanismFound", messageParams, ReportMessageSeverity.Warning);
+				hasDuplicateFax = true;
 			} else if(contactPurposeType.equals(phonePurposeType) && !telecomResult.containsKey("phone")){
 				telecomResult.put("phone", contact);
 			} else if(contactPurposeType.equals(faxPurposeType) && !telecomResult.containsKey("fax")){
@@ -327,7 +334,6 @@ public class SaftGenerator {
 	private static ReportResult getPartyWebContacts(Delegator delegator, String partyId, Timestamp startDate, Timestamp endDate, String emailPurposeType, String websitePurposeType) throws GenericEntityException {
 		ReportResult result = new ReportResult();
 		Map<String, GenericValue> webContactResult = FastMap.newInstance();
-		Map<String, String> messageParams = FastMap.newInstance();
 		
 		EntityCondition partyFilter = EntityCondition.makeCondition("partyId", EntityOperator.EQUALS, partyId);
 		
@@ -354,14 +360,23 @@ public class SaftGenerator {
 		EntityCondition webFilters = EntityCondition.makeCondition(UtilMisc.toList(partyFilter, pcmBeginDateFilter, pcmEndDateFilter, pcmpBeginDateFilter, pcmpEndDateFilter), EntityOperator.AND);
 		
 		List<GenericValue> webContacts = delegator.findList("ReportSaftOrgWebContact", webFilters, null, UtilMisc.toList("contactMechPurposeTypeId ASC", "cmLastUpdatedStamp DESC"), null, false);
+		boolean hasDuplicateEmail = false;
+		boolean hasDuplicateWebsite = false;
 		
 		for (GenericValue contact: webContacts){
 			String contactPurposeType = contact.getString("contactMechPurposeTypeId");
-			if((contactPurposeType.equals(emailPurposeType) && webContactResult.containsKey("email")) || (contactPurposeType.equals(websitePurposeType) && webContactResult.containsKey("website"))){
-				messageParams.clear();
+			if(contactPurposeType.equals(emailPurposeType) && webContactResult.containsKey("email") && !hasDuplicateEmail){
+				Map<String, String> messageParams = FastMap.newInstance();
 				messageParams.put("partyId", partyId);
 				messageParams.put("contactPurposeType", contactPurposeType);
 				result.addMessage("SaftMoreThanOneContactMechanismFound", messageParams, ReportMessageSeverity.Warning);
+				hasDuplicateEmail = true;
+			} else if(contactPurposeType.equals(websitePurposeType) && webContactResult.containsKey("website") && !hasDuplicateWebsite){
+				Map<String, String> messageParams = FastMap.newInstance();
+				messageParams.put("partyId", partyId);
+				messageParams.put("contactPurposeType", contactPurposeType);
+				result.addMessage("SaftMoreThanOneContactMechanismFound", messageParams, ReportMessageSeverity.Warning);
+				hasDuplicateWebsite = true;
 			} else if(contactPurposeType.equals(emailPurposeType) && !webContactResult.containsKey("email")){
 				webContactResult.put("email", contact);
 			} else if(contactPurposeType.equals(websitePurposeType) && !webContactResult.containsKey("website")){
@@ -379,7 +394,6 @@ public class SaftGenerator {
 			String taxAuthGeoId, String postalAddressPurposeType, String phonePurposeType, String faxPurposeType, 
 			String emailPurposeType, String websitePurposeType) throws GenericEntityException{
 		ReportResult result = new ReportResult();
-		Map<String, String> messageParams = FastMap.newInstance();
 		
 		ReportResult orgInfoResult = null;
 		ReportResult postalAddressResult = null;
@@ -459,7 +473,7 @@ public class SaftGenerator {
 			taxNumber = Integer.parseInt(taxId);
 			
 			if(taxNumber < 100000000){
-				messageParams.clear();
+				Map<String, String> messageParams = FastMap.newInstance();
 				messageParams.put("taxNumber", taxNumber.toString());
 				messageParams.put("orgPartyId", orgPartyId);
 				result.addMessage("SaftInvalidTaxNumber", messageParams, ReportMessageSeverity.Error);
@@ -487,7 +501,8 @@ public class SaftGenerator {
 			String address1 = postalAddress.getString("address1");
 			String address2 = postalAddress.getString("address2");
 			String city = postalAddress.getString("city");
-			String region = postalAddress.getString("stateGeoName");
+			String regionId = postalAddress.getString("stateGeoId");
+			String regionName = postalAddress.getString("stateGeoName");
 			String country = postalAddress.getString("countryGeoCode");
 			String postalCode = postalAddress.getString("postalCode");
 			
@@ -516,15 +531,15 @@ public class SaftGenerator {
 			if(ValidatePostalCode(postalCode)){
 				companyAddressElem.appendChild(CreateSimpleElement(doc, "PostalCode", postalCode));
 			} else {
-				messageParams.clear();
+				Map<String, String> messageParams = FastMap.newInstance();
 				messageParams.put("postalCode", postalCode);
 				messageParams.put("orgPartyId", orgPartyId);
 				result.addMessage("SaftInvalidPostalCode", messageParams, ReportMessageSeverity.Error);
 				//companyAddressElem.appendChild(CreateSimpleElement(doc, "PostalCode", "0000-000"));
 			}
 			
-			if(UtilValidate.isNotEmpty(region)){
-				companyAddressElem.appendChild(CreateSimpleElement(doc, "Region", region));
+			if(UtilValidate.isNotEmpty(regionName) && !regionId.equals("_NA_")){
+				companyAddressElem.appendChild(CreateSimpleElement(doc, "Region", regionName));
 			}
 			
 			if(UtilValidate.isNotEmpty(country)){
@@ -625,7 +640,6 @@ public class SaftGenerator {
 		List<ReportMessage> result = new ArrayList<ReportMessage>();
 		EntityExpr prtTaxAuthority = EntityCondition.makeCondition("taxAuthGeoId", EntityOperator.EQUALS, "PRT");
 		List<GenericValue> customers = delegator.findList("ReportSaftCustomers", prtTaxAuthority, null, UtilMisc.toList("-partyTaxId"), null, false);
-		Map<String, String> messageParams = FastMap.newInstance();
 		
 		for (GenericValue customer: customers){			
 			ReportResult postalAddressResult = null;
@@ -646,7 +660,7 @@ public class SaftGenerator {
 			taxNumber = Integer.parseInt(taxId);
 			
 			if(taxNumber < 100000000){
-				messageParams.clear();
+				Map<String, String> messageParams = FastMap.newInstance();
 				messageParams.put("taxNumber", taxNumber.toString());
 				messageParams.put("orgPartyId", partyId);
 				result.add(new ReportMessage("SaftInvalidTaxNumber", messageParams, ReportMessageSeverity.Error));
@@ -727,7 +741,8 @@ public class SaftGenerator {
 				String address1 = postalAddress.getString("address1");
 				String address2 = postalAddress.getString("address2");
 				String city = postalAddress.getString("city");
-				String region = postalAddress.getString("stateGeoName");
+				String regionId = postalAddress.getString("stateGeoId");
+				String regionName = postalAddress.getString("stateGeoName");
 				String country = postalAddress.getString("countryGeoCode");
 				String postalCode = postalAddress.getString("postalCode");
 				
@@ -756,15 +771,15 @@ public class SaftGenerator {
 				if(ValidatePostalCode(postalCode)){
 					companyAddressElem.appendChild(CreateSimpleElement(doc, "PostalCode", postalCode));
 				} else {
-					messageParams.clear();
+					Map<String, String> messageParams = FastMap.newInstance();
 					messageParams.put("postalCode", postalCode);
 					messageParams.put("orgPartyId", partyId);
 					result.add(new ReportMessage("SaftInvalidPostalCode", messageParams, ReportMessageSeverity.Error));
 					//companyAddressElem.appendChild(CreateSimpleElement(doc, "PostalCode", "0000-000"));
 				}
 				
-				if(UtilValidate.isNotEmpty(region)){
-					companyAddressElem.appendChild(CreateSimpleElement(doc, "Region", region));
+				if(UtilValidate.isNotEmpty(regionName) && !regionId.equals("_NA_")){
+					companyAddressElem.appendChild(CreateSimpleElement(doc, "Region", regionName));
 				}
 				
 				if(UtilValidate.isNotEmpty(country)){

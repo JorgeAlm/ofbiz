@@ -68,10 +68,6 @@
     	<value xml:lang="en">Process identifier</value>
 		<value xml:lang="pt">Id do processo</value>
     </property>
-    <property key="SaftJobName">
-    	<value xml:lang="en">Job name</value>
-		<value xml:lang="pt">Nome do processo</value>
-    </property>
     <property key="ReportQueueStatus">
     	<value xml:lang="en">Process status</value>
 		<value xml:lang="pt">Estado do processo</value>
@@ -80,19 +76,19 @@
     	<value xml:lang="en">Download</value>
 		<value xml:lang="pt">Transferir</value>
     </property>
-    <property key="SaftReportMessageSeverity">
+    <property key="ReportMessageSeverity">
     	<value xml:lang="en">Message severity</value>
 		<value xml:lang="pt">Severidade da mensagem</value>
     </property>
-    <property key="SaftReportMessage">
+    <property key="ReportMessage">
     	<value xml:lang="en">Message</value>
 		<value xml:lang="pt">Mensagem</value>
     </property>
-    <property key="SaftQueueCancelledMessage">
+    <property key="ReportQueueCancelledMessage">
     	<value xml:lang="en">This process has been cancelled.</value>
 		<value xml:lang="pt">O processo foi cancelado.</value>
     </property>
-    <property key="SaftQueueFailedMessage">
+    <property key="ReportQueueFailedMessage">
     	<value xml:lang="en">An error occurred while trying to run the process. Please try again.</value>
 		<value xml:lang="pt">O processo foi interrompido com erro, pf. tente novamente mais tarde.</value>
     </property>
@@ -218,15 +214,15 @@
 		<value xml:lang="pt">O código postal '${postalCode}' do participante '${orgPartyId}' é inválido.</value>
 	</property>
     <!-- Message Severity -->
-    <property key="SaftMessageSeverity_Error">
+    <property key="ReportMessageSeverity_Error">
     	<value xml:lang="en">Error</value>
 		<value xml:lang="pt">Erro</value>
     </property>
-    <property key="SaftMessageSeverity_Warning">
+    <property key="ReportMessageSeverity_Warning">
     	<value xml:lang="en">Warning</value>
 		<value xml:lang="pt">Aviso</value>
     </property>
-    <property key="SaftMessageSeverity_Information">
+    <property key="ReportMessageSeverity_Information">
     	<value xml:lang="en">Information</value>
 		<value xml:lang="pt">Informação</value>
     </property>

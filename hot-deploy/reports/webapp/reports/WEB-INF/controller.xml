@@ -28,21 +28,21 @@
 		<security https="true" auth="true" />
 		<event type="java" path="org.ofbiz.reports.ReportsEvents"
 			invoke="queueSaftPtReport" />
-		<response name="success" type="request-redirect" value="ReportSaftPending">
+		<response name="success" type="request-redirect" value="ReportPending">
 			<redirect-parameter name="reportQueueId" from="reportQueueId" />
 		</response>
 		<response name="redirectToForm" type="request-redirect-noparam"
 			value="ReportSaft" />
 	</request-map>
 
-	<request-map uri="ReportSaftPending">
+	<request-map uri="ReportPending">
 		<security https="true" auth="true" />
-		<response name="success" type="view" value="ReportSaftPending" />
+		<response name="success" type="view" value="ReportPending" />
 	</request-map>
 	
 	<request-map uri="ReportDetails">
 		<security https="true" auth="true" />
-		<response name="success" type="view" value="ReportSaftPending" />
+		<response name="success" type="view" value="ReportPending" />
 	</request-map>
 
 	<request-map uri="getReportStatusIdJson">
@@ -52,7 +52,7 @@
 		<response name="error" type="request" value="json" />
 	</request-map>
 
-	<request-map uri="getReportResultDisplay">
+	<request-map uri="getReportResultDisplayAjax">
 		<security https="true" auth="true" />
 		<response name="success" type="view" value="ReportResultDisplay" />
 	</request-map>
@@ -76,13 +76,13 @@
 
 	<!-- View Mappings -->
 	<view-map name="findReports" type="screen"
-		page="component://reports/widget/reports/ReportsScreens.xml#findReports" />
+		page="component://reports/widget/reports/ReportsScreens.xml#FindReports" />
 
 	<view-map name="ReportSaft" type="screen"
 		page="component://reports/widget/reports/ReportsScreens.xml#ReportSaft" />
 
-	<view-map name="ReportSaftPending" type="screen"
-		page="component://reports/widget/reports/ReportsScreens.xml#ReportSaftPending" />
+	<view-map name="ReportPending" type="screen"
+		page="component://reports/widget/reports/ReportsScreens.xml#ReportPending" />
 
 	<view-map name="ReportResultDisplay" type="screen"
 		page="component://reports/widget/reports/ReportsScreens.xml#ReportResultDisplay" />

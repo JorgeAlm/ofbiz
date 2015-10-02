@@ -23,7 +23,7 @@ function getReportStatus(placeHolderId, statusPlaceHolderId, queueId){
 
 function getDownloadDisplay(placeHolderId, queueId) {
 	jQuery.ajax({
-        url: 'getReportResultDisplay',
+        url: 'getReportResultDisplayAjax',
         async: false,
         type: 'GET',
         data: { reportQueueId: queueId },

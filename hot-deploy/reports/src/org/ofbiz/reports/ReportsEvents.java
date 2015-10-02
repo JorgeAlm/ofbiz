@@ -87,13 +87,13 @@ public class ReportsEvents {
 		
 		delegator.create(reportQueue);
 		
-		mapIn.clear();
-		mapIn.put("locale", locale);
-        mapIn.put("userLogin", userLogin);
-        mapIn.put("timeZone", timeZone);
-        mapIn.put("reportQueueId", reportQueueId);
+		Map<String, Object> serviceMapIn = FastMap.newInstance();
+		serviceMapIn.put("locale", locale);
+		serviceMapIn.put("userLogin", userLogin);
+		serviceMapIn.put("timeZone", timeZone);
+		serviceMapIn.put("reportQueueId", reportQueueId);
         
-        dispatcher.schedule("processReportQueue", mapIn, UtilDateTime.nowTimestamp().getTime());
+        dispatcher.schedule("processReportQueue", serviceMapIn, UtilDateTime.nowTimestamp().getTime());
         
 		request.setAttribute("reportQueueId", reportQueueId);
 

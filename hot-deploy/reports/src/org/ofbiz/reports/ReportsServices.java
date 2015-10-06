@@ -293,7 +293,7 @@ public class ReportsServices {
         if(UtilValidate.isNotEmpty(sortField)){
             orderBy.add(sortField);
         } else {
-        	orderBy.add("createdTxStamp");
+        	orderBy.add("-createdTxStamp");
         }
         
         // do the lookup

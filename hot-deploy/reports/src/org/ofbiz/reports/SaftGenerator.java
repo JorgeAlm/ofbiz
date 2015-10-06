@@ -237,7 +237,7 @@ public class SaftGenerator {
 		
 		EntityCondition addressFilters = EntityCondition.makeCondition(filtersList, EntityOperator.AND);
 		
-		List<GenericValue> postalAddressesList = delegator.findList("ReportSaftOrgPA", addressFilters, null, UtilMisc.toList("paLastUpdatedStamp DESC"), null, false);
+		List<GenericValue> postalAddressesList = delegator.findList("ReportSaftPartyPA", addressFilters, null, UtilMisc.toList("paLastUpdatedStamp DESC"), null, false);
 		
 		if(postalAddressesList.size() == 0 && hasUserFilter){
 			Map<String, String> messageParams = FastMap.newInstance();
@@ -250,7 +250,7 @@ public class SaftGenerator {
 			filtersList.remove(filtersList.size() - 1);
 			
 			addressFilters = EntityCondition.makeCondition(filtersList, EntityOperator.AND);
-			postalAddressesList = delegator.findList("ReportSaftOrgPA", addressFilters, null, null, null, false);
+			postalAddressesList = delegator.findList("ReportSaftPartyPA", addressFilters, null, null, null, false);
 		}
 		
 		if(postalAddressesList == null || postalAddressesList.isEmpty()){
@@ -299,7 +299,7 @@ public class SaftGenerator {
 		
 		EntityCondition telecomFilters = EntityCondition.makeCondition(UtilMisc.toList(partyFilter, pcmBeginDateFilter, pcmEndDateFilter, pcmpBeginDateFilter, pcmpEndDateFilter), EntityOperator.AND);
 		
-		List<GenericValue> telecomContacts = delegator.findList("ReportSaftOrgTelecom", telecomFilters, null, UtilMisc.toList("contactMechPurposeTypeId ASC", "tnLastUpdatedStamp DESC"), null, false);
+		List<GenericValue> telecomContacts = delegator.findList("ReportSaftPartyTelecom", telecomFilters, null, UtilMisc.toList("contactMechPurposeTypeId ASC", "tnLastUpdatedStamp DESC"), null, false);
 		boolean hasDuplicatePhone = false;
 		boolean hasDuplicateFax = false;
 		
@@ -359,7 +359,7 @@ public class SaftGenerator {
 		
 		EntityCondition webFilters = EntityCondition.makeCondition(UtilMisc.toList(partyFilter, pcmBeginDateFilter, pcmEndDateFilter, pcmpBeginDateFilter, pcmpEndDateFilter), EntityOperator.AND);
 		
-		List<GenericValue> webContacts = delegator.findList("ReportSaftOrgWebContact", webFilters, null, UtilMisc.toList("contactMechPurposeTypeId ASC", "cmLastUpdatedStamp DESC"), null, false);
+		List<GenericValue> webContacts = delegator.findList("ReportSaftPartyWebContact", webFilters, null, UtilMisc.toList("contactMechPurposeTypeId ASC", "cmLastUpdatedStamp DESC"), null, false);
 		boolean hasDuplicateEmail = false;
 		boolean hasDuplicateWebsite = false;
 		

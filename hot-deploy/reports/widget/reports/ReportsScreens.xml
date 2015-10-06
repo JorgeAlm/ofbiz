@@ -228,6 +228,12 @@
 														</widgets>
 													</section>
 												</container>
+												<container>
+													<link target="DeleteReport" text="${uiLabelMap.ReportCommonDelete}"
+														style="buttontext">
+														<parameter param-name="reportId" from-field="report.reportId" />
+													</link>
+												</container>
 											</widgets>
 											<fail-widgets>
 												<section>
@@ -239,6 +245,9 @@
 														<include-screen name="ReportQueueDetailsDisplay" />
 													</widgets>
 												</section>
+												<container>
+													<include-screen name="ReportValidationMessages" />
+												</container>
 												<container id="ReportResultPlaceHolder">
 													<link target="DownloadReport" text="${uiLabelMap.ReportCommonDownload}"
 														style="buttontext">
@@ -248,9 +257,6 @@
 														style="buttontext">
 														<parameter param-name="reportId" from-field="report.reportId" />
 													</link>
-												</container>
-												<container>
-													<include-screen name="ReportValidationMessages" />
 												</container>
 											</fail-widgets>
 										</section>

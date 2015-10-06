@@ -74,7 +74,7 @@
 		
 	</view-entity>
 	
-	<view-entity entity-name="ReportSaftOrgPA" package-name="org.ofbiz.reports">
+	<view-entity entity-name="ReportSaftPartyPA" package-name="org.ofbiz.reports">
 		<member-entity entity-name="Party" entity-alias="P"/>
 		<member-entity entity-name="PartyContactMech" entity-alias="PCM"/>
 		<member-entity entity-name="PartyContactMechPurpose" entity-alias="PCMP"/>
@@ -128,7 +128,7 @@
         </entity-condition>
 	</view-entity>
 	
-	<view-entity entity-name="ReportSaftOrgTelecom" package-name="org.ofbiz.reports">
+	<view-entity entity-name="ReportSaftPartyTelecom" package-name="org.ofbiz.reports">
 		<member-entity entity-name="Party" entity-alias="P"/>
 		<member-entity entity-name="PartyContactMech" entity-alias="PCM"/>
 		<member-entity entity-name="PartyContactMechPurpose" entity-alias="PCMP"/>
@@ -166,7 +166,7 @@
         </entity-condition>        
 	</view-entity>
 	
-	<view-entity entity-name="ReportSaftOrgWebContact" package-name="org.ofbiz.reports">
+	<view-entity entity-name="ReportSaftPartyWebContact" package-name="org.ofbiz.reports">
 		<member-entity entity-name="Party" entity-alias="P"/>
 		<member-entity entity-name="PartyContactMech" entity-alias="PCM"/>
 		<member-entity entity-name="PartyContactMechPurpose" entity-alias="PCMP"/>

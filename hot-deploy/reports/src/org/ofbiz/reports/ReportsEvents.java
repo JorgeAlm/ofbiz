@@ -107,28 +107,33 @@ public class ReportsEvents {
 		Delegator delegator = dispatcher.getDelegator();
 		
 		String reportId = request.getParameter("reportId").toString();
-		String xmlString = "";
+		String output = "";
 		
 		GenericValue job = delegator.findOne("Report", UtilMisc.toMap("reportId", reportId), false);
+		GenericValue reportType = job.getRelatedOne("ReportType", false);
 		
-		xmlString = job.getString("reportData");
+		output = job.getString("reportData");
 		
-		// set the Xml content type
-		response.setContentType("application/xml");
-		response.setHeader("Content-Disposition",
-				"attachment; filename=\"Report.xml\"");
+		if(UtilValidate.isEmpty(output)){
+			output = job.getString("reportDataBin");
+		}
+		
+		// set the content type
+		response.setContentType(reportType.getString("reportContentType"));
+		response.setHeader("Content-Disposition", "attachment; filename=\"" + reportType.getString("defaultFileName") + "\"");
+		
 		// jsonStr.length is not reliable for unicode characters
 		try {
-			response.setContentLength(xmlString.getBytes("UTF8").length);
+			response.setContentLength(output.getBytes("UTF8").length);
 		} catch (UnsupportedEncodingException e) {
-			Debug.logError("Problems with XML encoding: " + e, module);
+			Debug.logError("Problems with encoding: " + e, module);
 		}
 
 		// return the XML String
 		ServletOutputStream out;
 		try {
 			out = response.getOutputStream();
-			out.write(xmlString.getBytes("UTF8"));
+			out.write(output.getBytes("UTF8"));
 			out.flush();
 		} catch (IOException e) {
 			Debug.logError(e, module);

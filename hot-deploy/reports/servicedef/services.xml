@@ -24,13 +24,13 @@ under the License.
     <vendor>JAlmeida</vendor>
     <version>1.0</version>
     
-    <service name="processReportQueue" engine="java" auth="true"
+    <service name="processReportQueue" engine="java" auth="true" use-transaction="false"
     		location="org.ofbiz.reports.ReportsServices" invoke="processReportQueue">
     	<description>Process Report Queue entities</description>
     	<attribute name="reportQueueId" mode="IN" type="String" optional="false" />
     </service>
 
-    <service name="generateSaft" engine="java" auth="true"
+    <service name="generateSaft" engine="java" auth="true" use-transaction="false"
             location="org.ofbiz.reports.ReportsServices" invoke="generateSaft">
         <description>Generates the SAFT report</description>
         <attribute name="timePeriod" mode="IN" type="String" optional="false" />

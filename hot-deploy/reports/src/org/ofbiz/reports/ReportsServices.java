@@ -55,7 +55,7 @@ public class ReportsServices {
 			return ServiceUtil.returnError("Could not find report queue entry with id '" + reportQueueId + "'.");
 		} else {
 			String parameters = reportQueue.getString("reportQueueParams");
-			String reportType = reportQueue.getString("reportTypeId");
+			String reportTypeId = reportQueue.getString("reportTypeId");
 			Map<String, Object> mapIn = FastMap.newInstance();
 			
 			if(!UtilValidate.isEmpty(parameters)){
@@ -71,32 +71,39 @@ public class ReportsServices {
 	        mapIn.put("userLogin", userLogin);
 	        mapIn.put("timeZone", context.get("timeZone"));
 			
-			if(reportType.compareTo("SAFTPT") == 0){
-				try{
-					reportQueue.set("reportQueueStatusId", "RUNNING");
-					delegator.store(reportQueue);
+	        GenericValue reportType = delegator.findOne("ReportType", false, UtilMisc.toMap("reportTypeId", reportTypeId));
+	        
+			try{
+				reportQueue.set("reportQueueStatusId", "RUNNING");
+				delegator.store(reportQueue);
+				
+				Map<String, Object> result = dispatcher.runSync(reportType.getString("serviceName"), mapIn, 300, true);
+				
+				if(result != null){	
+					Boolean beganTransaction = TransactionUtil.begin();
 					
-					// will be running in an isolated transaction to prevent rollbacks
-					Map<String, Object> result = dispatcher.runSync("generateSaft", mapIn, 300, true);
-					
-					if(result != null){	
-						if(result.containsKey("saftContent")) {
-							persistJobResult(delegator, reportName, userLogin, reportQueue, result);
-							reportQueue.set("reportQueueStatusId", "FINISHED");
-							delegator.store(reportQueue);
-						} else {
-							persistJobResult(delegator, reportName, userLogin, reportQueue, result);
-							reportQueue.set("reportQueueStatusId", "FAILED");
-							delegator.store(reportQueue);
-						}
+					if(result.containsKey("saftContent")) {
+						persistJobResult(delegator, reportName, userLogin, reportQueue, result);
+						reportQueue.set("reportQueueStatusId", "FINISHED");
+						delegator.store(reportQueue);
+					} else {
+						persistJobResult(delegator, reportName, userLogin, reportQueue, result);
+						reportQueue.set("reportQueueStatusId", "FAILED");
+						delegator.store(reportQueue);
 					}
-				} catch(Exception e){
-					reportQueue.set("reportQueueStatusId", "CRASHED");
-					delegator.store(reportQueue);
-					TransactionUtil.commit();
-					Debug.logError("Error while trying to process saft queue item " + reportQueueId + ". Error Message: " + e.getMessage(), module);
-					return ServiceUtil.returnError(e.getMessage());
+					
+					TransactionUtil.commit(beganTransaction);
 				}
+			} catch(Exception e){
+				Boolean beganTransaction = TransactionUtil.begin();
+				
+				reportQueue.set("reportQueueStatusId", "CRASHED");
+				delegator.store(reportQueue);
+
+				TransactionUtil.commit(beganTransaction);
+				
+				Debug.logError("Error while trying to process saft queue item " + reportQueueId + ". Error Message: " + e.getMessage(), module);
+				return ServiceUtil.returnError(e.getMessage());
 			}
 			
 			return ServiceUtil.returnSuccess();

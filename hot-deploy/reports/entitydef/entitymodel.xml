@@ -5,6 +5,9 @@
 	<entity entity-name="ReportType" package-name="org.ofbiz.reports" title="Report Type entity">
 		<field name="reportTypeId" type="id-ne" />
 		<field name="description" type="description" />
+		<field name="serviceName" type="long-varchar" />
+		<field name="reportContentType" type="long-varchar" />
+		<field name="defaultFileName" type="short-varchar" />
 		<prim-key field="reportTypeId" />
 	</entity>
 	

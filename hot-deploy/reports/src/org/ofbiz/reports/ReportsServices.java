@@ -144,33 +144,6 @@ public class ReportsServices {
 		return result;
 	}
 	
-	public static Map<String, Object> getReportStatusDisplayForSaft(DispatchContext ctx, Map<String, ? extends Object> context) throws GenericEntityException, SerializeException, FileNotFoundException, IOException {
-		Map<String, Object> result = FastMap.newInstance();
-		Delegator delegator = ctx.getDelegator();
-		Locale locale = (Locale) context.get("locale");
-		String reportQueueId = context.get("reportQueueId").toString();
-		String reportQueueStatusId = null;
-		String reportQueueStatusIdDisplay = null;
-		
-		GenericValue reportQueue = delegator.findOne("ReportQueue", false, UtilMisc.toMap("reportQueueId", reportQueueId));
-		
-		if(reportQueue == null){
-			return ServiceUtil.returnError("Unable to find job.");
-		} else {
-			reportQueueStatusId = reportQueue.getString("reportQueueStatusId");
-			reportQueueStatusIdDisplay = UtilProperties.getMessage("ReportsUiLabels", "ReportQueueStatus_" + reportQueueStatusId, locale);
-		}
-		
-		if(UtilValidate.isEmpty(reportQueueStatusId)){
-			return ServiceUtil.returnError("Unable to find job status id display name.");
-		} else {
-			result.put("reportQueueStatusId", reportQueueStatusId);
-			result.put("reportQueueStatusIdDisplay", reportQueueStatusIdDisplay);
-			result.put(ModelService.RESPONSE_MESSAGE, ModelService.RESPOND_SUCCESS);
-			return result;
-		}
-	}
-	
 	public static Map<String, Object> findReports(DispatchContext dctx, Map<String, ? extends Object> context) {
         Map<String, Object> result = ServiceUtil.returnSuccess();
         Delegator delegator = dctx.getDelegator();

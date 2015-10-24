@@ -24,9 +24,14 @@ import org.ofbiz.base.util.UtilMisc;
 import org.ofbiz.base.util.UtilProperties;
 import org.ofbiz.base.util.UtilValidate;
 import org.ofbiz.entity.Delegator;
+import org.ofbiz.entity.GenericEntityException;
 import org.ofbiz.entity.GenericValue;
+import org.ofbiz.entity.serialize.SerializeException;
 import org.ofbiz.entity.serialize.XmlSerializer;
+import org.ofbiz.service.DispatchContext;
 import org.ofbiz.service.LocalDispatcher;
+import org.ofbiz.service.ModelService;
+import org.ofbiz.service.ServiceUtil;
 
 public class ReportsEvents {
 	public static final String module = ReportsEvents.class.getName();
@@ -97,6 +102,36 @@ public class ReportsEvents {
         
 		request.setAttribute("reportQueueId", reportQueueId);
 
+		return "success";
+	}
+	
+	public static String getReportStatusDisplayForSaft(HttpServletRequest request,
+			HttpServletResponse response) throws GenericEntityException, SerializeException, FileNotFoundException, IOException {
+		Delegator delegator = (Delegator) request.getAttribute("delegator");
+		Locale locale = UtilHttp.getLocale(request);
+		String reportQueueId = request.getParameter("reportQueueId").toString();
+		String reportQueueStatusId = null;
+		String reportQueueStatusIdDisplay = null;
+		
+		GenericValue reportQueue = delegator.findOne("ReportQueue", false, UtilMisc.toMap("reportQueueId", reportQueueId));
+		
+		if(reportQueue == null){
+			request.setAttribute("_ERROR_MESSAGE_", "Unable to find job.");
+            return "error";
+		} else {
+			reportQueueStatusId = reportQueue.getString("reportQueueStatusId");
+			reportQueueStatusIdDisplay = UtilProperties.getMessage("ReportsUiLabels", "ReportQueueStatus_" + reportQueueStatusId, locale);
+		}
+		
+		if(UtilValidate.isEmpty(reportQueueStatusId)){
+			request.setAttribute("_ERROR_MESSAGE_", "Unable to find job status id display name.");
+            return "error";
+		} else {
+			request.setAttribute("reportQueueStatusId", reportQueueStatusId);
+			request.setAttribute("reportQueueStatusIdDisplay", reportQueueStatusIdDisplay);
+			request.setAttribute(ModelService.RESPONSE_MESSAGE, ModelService.RESPOND_SUCCESS);
+		}
+		
 		return "success";
 	}
 	

@@ -43,12 +43,4 @@ under the License.
         <attribute name="saftContent" mode="OUT" type="String" optional="true" />
         <attribute name="saftMessages" mode="OUT" type="java.util.List" optional="true" />
     </service>
-    
-    <service name="getReportStatusDisplayForSaft" engine="java" auth="true" invoke="getReportStatusDisplayForSaft"
-    	location="org.ofbiz.reports.ReportsServices">
-    	<description>Retrieves the Report Queue Status ID of a given report queue entry.</description>
-    	<attribute name="reportQueueId" mode="IN" type="String" optional="false" />
-    	<attribute name="reportQueueStatusId" mode="OUT" type="String" />
-    	<attribute name="reportQueueStatusIdDisplay" mode="OUT" type="String" />
-    </service>
 </services>

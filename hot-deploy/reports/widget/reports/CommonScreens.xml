@@ -28,25 +28,10 @@
 
 	<screen name="main">
 		<section>
-			<!--<actions>
-				<set field="tabButtonItem" value="main"></set>
-				<set field="invoiceTypeId" value="PURCHASE_INVOICE" />
-			</actions>-->
 			<widgets>
 				<decorator-screen name="main-decorator"
 					location="${parameters.mainDecoratorLocation}">
 					<decorator-section name="body">
-						<!--<section>
-							<actions>
-								<set field="organizationPartyId" from-field="organizationPartyId"
-									default-value="${defaultOrganizationPartyId}" />
-								<script
-									location="component://accounting/webapp/accounting/WEB-INF/actions/invoice/InvoiceReport.groovy" />
-							</actions>
-							<widgets>
-								<include-portal-page id="ApPortalPage" />
-							</widgets>
-						</section>-->
 					</decorator-section>
 				</decorator-screen>
 			</widgets>

@@ -41,6 +41,12 @@ import org.w3c.dom.Text;
 public class SaftGenerator {
 
 	public static final String module = SaftGenerator.class.getName();
+	private static final String defaultTaxAuthGeoId = "PRT";
+	private static final String defaultPostalAddressPurposeType = "BILLING_LOCATION";
+	private static final String defaultPhonePurposeType = "PRIMARY_PHONE";
+	private static final String defaultFaxPurposeType = "FAX_NUMBER";
+	private static final String defaultEmailPurposeType = "PRIMARY_EMAIL";
+	private static final String defaultWebsitePurposeType = "PRIMARY_WEB_URL";
 	
 	public static ReportResult generateReport(Delegator delegator, String customTimePeriodId,
 			String taxAuthGeoId, String postalAddressPurposeType, String phonePurposeType, String faxPurposeType, 
@@ -49,27 +55,27 @@ public class SaftGenerator {
 		ReportResult result = new ReportResult();
 		
 		if(UtilValidate.isEmpty(taxAuthGeoId)){
-			taxAuthGeoId = "PRT";
+			taxAuthGeoId = defaultTaxAuthGeoId;
 		}
 		
 		if(UtilValidate.isEmpty(postalAddressPurposeType)){
-			postalAddressPurposeType = "BILLING_LOCATION";
+			postalAddressPurposeType = defaultPostalAddressPurposeType;
 		}
 		
 		if(UtilValidate.isEmpty(phonePurposeType)){
-			phonePurposeType = "PRIMARY_PHONE";
+			phonePurposeType = defaultPhonePurposeType;
 		}
 		
 		if(UtilValidate.isEmpty(faxPurposeType)){
-			faxPurposeType = "FAX_NUMBER";
+			faxPurposeType = defaultFaxPurposeType;
 		}
 		
 		if(UtilValidate.isEmpty(emailPurposeType)){
-			emailPurposeType = "PRIMARY_EMAIL";
+			emailPurposeType = defaultEmailPurposeType;
 		}
 		
 		if(UtilValidate.isEmpty(websitePurposeType)){
-			websitePurposeType = "PRIMARY_WEB_URL";
+			websitePurposeType = defaultWebsitePurposeType;
 		}
 		
 		DocumentBuilderFactory docFactory = DocumentBuilderFactory
@@ -232,7 +238,7 @@ public class SaftGenerator {
 			EntityCondition pcmpContactMechPurposeType = EntityCondition.makeCondition("contactMechPurposeTypeId", EntityOperator.EQUALS, postalAddressPurposeType);
 			filtersList.add(pcmpContactMechPurposeType);
 			
-			hasUserFilter = true;
+			hasUserFilter = !postalAddressPurposeType.equals(defaultPostalAddressPurposeType);
 		}
 		
 		EntityCondition addressFilters = EntityCondition.makeCondition(filtersList, EntityOperator.AND);
@@ -257,7 +263,7 @@ public class SaftGenerator {
 			Map<String, String> messageParams = FastMap.newInstance();
 			messageParams.put("partyId", partyId);
 			messageParams.put("countryGeoId", countryGeoId);
-			result.addMessage("SaftNoActivePostalAddressFound", messageParams, ReportMessageSeverity.Error);
+			result.addMessage("SaftNoActivePostalAddressFound", messageParams, ReportMessageSeverity.Warning);
 		} else if (postalAddressesList.size() > 1){
 			Map<String, String> messageParams = FastMap.newInstance();
 			messageParams.put("partyId", partyId);
@@ -564,7 +570,7 @@ public class SaftGenerator {
 		header.appendChild(CreateSimpleElement(doc, "DateCreated", shortDateFormat.format(UtilDateTime.nowDate())));
 		
 		// Required - TaxEntity
-		header.appendChild(CreateSimpleElement(doc, "TaxEntity", "TODO"));
+		header.appendChild(CreateSimpleElement(doc, "TaxEntity", "Global"));
 		
 		// Required - ProductCompanyTaxID
 		header.appendChild(CreateSimpleElement(doc, "ProductCompanyTaxID", "TODO"));
@@ -693,7 +699,7 @@ public class SaftGenerator {
 			}
 			
 			// Contact
-			// customerElement.appendChild(CreateSimpleElement(doc, "Contact", "Carlos Antunes"));
+			// customerElement.appendChild(CreateSimpleElement(doc, "Contact", "TODO"));
 			
 			// Retrieve Data
 			postalAddressResult = getPartyAddress(delegator, partyId, startDate, endDate, postalAddressPurposeType, taxAuthGeoId);
@@ -775,7 +781,6 @@ public class SaftGenerator {
 					messageParams.put("postalCode", postalCode);
 					messageParams.put("orgPartyId", partyId);
 					result.add(new ReportMessage("SaftInvalidPostalCode", messageParams, ReportMessageSeverity.Error));
-					//companyAddressElem.appendChild(CreateSimpleElement(doc, "PostalCode", "0000-000"));
 				}
 				
 				if(UtilValidate.isNotEmpty(regionName) && !regionId.equals("_NA_")){
@@ -785,6 +790,14 @@ public class SaftGenerator {
 				if(UtilValidate.isNotEmpty(country)){
 					companyAddressElem.appendChild(CreateSimpleElement(doc, "Country", country));
 				}
+				customerElement.appendChild(companyAddressElem);
+			} else {
+				// Export "Unknown" postal address values.
+				Element companyAddressElem = doc.createElement("BillingAddress");
+				companyAddressElem.appendChild(CreateSimpleElement(doc, "AddressDetail",  "Desconhecido"));
+				companyAddressElem.appendChild(CreateSimpleElement(doc, "City", "Desconhecido"));
+				companyAddressElem.appendChild(CreateSimpleElement(doc, "PostalCode", "Desconhecido"));
+				companyAddressElem.appendChild(CreateSimpleElement(doc, "Country", "Desconhecido"));
 				customerElement.appendChild(companyAddressElem);
 			}
 			
